@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gold Market Intelligence - Trends, Predictions & Investments</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <i class="fas fa-coins"></i>
+                    <span>Gold Market Intelligence</span>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#trends">Trends</a></li>
+                    <li><a href="#predictions">Predictions</a></li>
+                    <li><a href="#stocks">Stocks & ETFs</a></li>
+                    <li><a href="#analysis">Analysis</a></li>
+                    <li>
+                        <select id="currency-selector" class="currency-dropdown">
+                            <option value="USD">USD ($)</option>
+                            <option value="INR">INR (₹)</option>
+                        </select>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Real-Time Gold Market Intelligence</h1>
+            <p>Track gold prices, analyze trends, and discover investment opportunities</p>
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3 id="current-price">$2,045.50</h3>
+                    <p id="price-label">Current Gold Price (USD/oz)</p>
+                    <span class="change positive" id="price-change">+1.2%</span>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-calendar-day"></i>
+                    <h3 id="daily-high">$2,058.30</h3>
+                    <p>24h High</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-calendar-day"></i>
+                    <h3 id="daily-low">$2,032.10</h3>
+                    <p>24h Low</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gold Trends Section -->
+    <section id="trends" class="section">
+        <div class="container">
+            <h2><i class="fas fa-chart-area"></i> Gold Price Trends</h2>
+            <div class="chart-controls">
+                <button class="btn-period active" data-period="1D">1 Day</button>
+                <button class="btn-period" data-period="1W">1 Week</button>
+                <button class="btn-period" data-period="1M">1 Month</button>
+                <button class="btn-period" data-period="3M">3 Months</button>
+                <button class="btn-period" data-period="1Y">1 Year</button>
+                <button class="btn-period" data-period="5Y">5 Years</button>
+            </div>
+            <div class="chart-container">
+                <canvas id="goldPriceChart"></canvas>
+            </div>
+            <div class="trend-insights">
+                <div class="insight-card">
+                    <h4>Market Sentiment</h4>
+                    <div class="sentiment bullish">
+                        <i class="fas fa-arrow-trend-up"></i>
+                        <span>Bullish</span>
+                    </div>
+                    <p>Strong buying pressure with increasing institutional interest</p>
+                </div>
+                <div class="insight-card">
+                    <h4>Volatility Index</h4>
+                    <div class="volatility-meter">
+                        <div class="meter-fill" style="width: 65%"></div>
+                    </div>
+                    <p>Moderate volatility - 65/100</p>
+                </div>
+                <div class="insight-card">
+                    <h4>Trading Volume</h4>
+                    <h3>2.4M oz</h3>
+                    <p>24h trading volume <span class="positive">+15%</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Predictions Section -->
+    <section id="predictions" class="section dark-section">
+        <div class="container">
+            <h2><i class="fas fa-crystal-ball"></i> Gold Price Predictions</h2>
+            <div class="prediction-grid">
+                <div class="prediction-card">
+                    <h3>Short-Term Forecast</h3>
+                    <p class="timeframe">Next 30 Days</p>
+                    <div class="prediction-range">
+                        <div class="range-bar">
+                            <span class="low">$2,020</span>
+                            <div class="range-fill"></div>
+                            <span class="high">$2,150</span>
+                        </div>
+                    </div>
+                    <p class="prediction-value">Expected: <strong>$2,085</strong></p>
+                    <div class="confidence">
+                        <span>Confidence: 78%</span>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" style="width: 78%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="prediction-card">
+                    <h3>Medium-Term Forecast</h3>
+                    <p class="timeframe">Next 6 Months</p>
+                    <div class="prediction-range">
+                        <div class="range-bar">
+                            <span class="low">$1,980</span>
+                            <div class="range-fill"></div>
+                            <span class="high">$2,280</span>
+                        </div>
+                    </div>
+                    <p class="prediction-value">Expected: <strong>$2,180</strong></p>
+                    <div class="confidence">
+                        <span>Confidence: 65%</span>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" style="width: 65%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="prediction-card">
+                    <h3>Long-Term Forecast</h3>
+                    <p class="timeframe">Next 12 Months</p>
+                    <div class="prediction-range">
+                        <div class="range-bar">
+                            <span class="low">$1,900</span>
+                            <div class="range-fill"></div>
+                            <span class="high">$2,450</span>
+                        </div>
+                    </div>
+                    <p class="prediction-value">Expected: <strong>$2,320</strong></p>
+                    <div class="confidence">
+                        <span>Confidence: 52%</span>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" style="width: 52%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="prediction-factors">
+                <h3>Key Factors Influencing Predictions</h3>
+                <div class="factors-grid">
+                    <div class="factor">
+                        <i class="fas fa-dollar-sign"></i>
+                        <h4>USD Strength</h4>
+                        <p>Inverse correlation with gold prices</p>
+                    </div>
+                    <div class="factor">
+                        <i class="fas fa-percentage"></i>
+                        <h4>Interest Rates</h4>
+                        <p>Fed policy impacts gold demand</p>
+                    </div>
+                    <div class="factor">
+                        <i class="fas fa-fire"></i>
+                        <h4>Inflation</h4>
+                        <p>Gold as inflation hedge</p>
+                    </div>
+                    <div class="factor">
+                        <i class="fas fa-globe"></i>
+                        <h4>Geopolitical Events</h4>
+                        <p>Safe-haven demand driver</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stocks & ETFs Section -->
+    <section id="stocks" class="section">
+        <div class="container">
+            <h2><i class="fas fa-building-columns"></i> Gold Stocks & ETFs</h2>
+            
+            <!-- ETFs -->
+            <div class="investment-category">
+                <h3>Top Gold ETFs</h3>
+                <div class="investment-grid">
+                    <div class="investment-card">
+                        <div class="card-header">
+                            <h4>SPDR Gold Shares</h4>
+                            <span class="ticker">GLD</span>
+                        </div>
+                        <div class="price-info">
+                            <span class="price">$185.42</span>
+                            <span class="change positive">+0.85%</span>
+                        </div>
+                        <div class="card-details">
+                            <div class="detail">
+                                <span>AUM:</span>
+                                <strong>$58.2B</strong>
+                            </div>
+                            <div class="detail">
+                                <span>Expense Ratio:</span>
+                                <strong>0.40%</strong>
+                            </div>
+                            <div class="detail">
+                                <span>YTD Return:</span>
+                                <strong class="positive">+12.3%</strong>
+                            </div>
+                        </div>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span>4.5/5</span>
+                        </div>
+                    </div>
+
+                    <div class="investment-card">
+                        <div class="card-header">
+                            <h4>iShares Gold Trust</h4>
+                            <span class="ticker">IAU</span>
+                        </div>
+                        <div class="price-info">
+                            <span class="price">$37.28</span>
+                            <span class="change positive">+0.92%</span>
+                        </div>
+                        <div class="card-details">
+                            <div class="detail">
+                                <span>AUM:</span>
+                                <strong>$28.5B</strong>
+                            </div>
+                            <div class="detail">
+                                <span>Expense Ratio:</span>
+                                <strong>0.25%</strong>
+                            </div>
+                            <div class="detail">
+                                <span>YTD Return:</span>
+                                <strong class="positive">+12.5%</strong>
+                            </div>
+                        </div>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span>4.8/5</span>
+                        </div>
+                    </div>
+
+                    <div class="investment-card">
+                        <div class="card-header">
+                            <h4>Aberdeen Gold ETF</h4>
+                            <span class="ticker">SGOL</span>
+                        </div>
+                        <div class="price-info">
+                            <span class="price">$18.95</span>
+                            <span class="change positive">+0.78%</span>
+                        </div>
+                        <div class="card-details">
+                            <div class="detail">
+                                <span>AUM:</span>
+                                <strong>$3.2B</strong>
+                            </div>
+                            <div class="detail">
+                                <span>Expense Ratio:</span>
+                                <strong>0.17%</strong>
+                            </div>
+                            <div class="detail">
+                                <span>YTD Return:</span>
+                                <strong class="positive">+12.1%</strong>
+                            </div>
+                        </div>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <span>4.2/5</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mining Stocks -->
+            <div class="investment-category">
+                <h3>Top Gold Mining Stocks</h3>
+                <div class="investment-grid">
+                    <div class="investment-card">
+                        <div class="card-header">
+                            <h4>Newmont Corporation</h4>
+                            <span class="ticker">NEM</span>
+                        </div>
+                        <div class="price-info">
+                            <span class="price">$42.15</span>
+                            <span class="change positive">+2.34%</span>
+                        </div>
+                        <div class="card-details">
+                            <div class="detail">
+                                <span>Market Cap:</span>
+                                <strong>$33.5B</strong>
+                            </div>
+                            <div class="detail">
+                                <span>Dividend Yield:</span>
+                                <strong>3.8%</strong>
+                            </div>
+                            <div class="detail">
+                                <span>YTD Return:</span>
+                                <strong class="positive">+18.7%</strong>
+                            </div>
+                        </div>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span>4.6/5</span>
+                        </div>
+                    </div>
+
+                    <div class="investment-card">
+                        <div class="card-header">
+                            <h4>Barrick Gold</h4>
+                            <span class="ticker">GOLD</span>
+                        </div>
+                        <div class="price-info">
+                            <span class="price">$18.92</span>
+                            <span class="change positive">+1.87%</span>
+                        </div>
+                        <div class="card-details">
+                            <div class="detail">
+                                <span>Market Cap:</span>
+                                <strong>$32.8B</strong>
+                            </div>
+                            <div class="detail">
+                                <span>Dividend Yield:</span>
+                                <strong>2.5%</strong>
+                            </div>
+                            <div class="detail">
+                                <span>YTD Return:</span>
+                                <strong class="positive">+15.2%</strong>
+                            </div>
+                        </div>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <span>4.3/5</span>
+                        </div>
+                    </div>
+
+                    <div class="investment-card">
+                        <div class="card-header">
+                            <h4>Franco-Nevada</h4>
+                            <span class="ticker">FNV</span>
+                        </div>
+                        <div class="price-info">
+                            <span class="price">$128.45</span>
+                            <span class="change positive">+1.45%</span>
+                        </div>
+                        <div class="card-details">
+                            <div class="detail">
+                                <span>Market Cap:</span>
+                                <strong>$24.6B</strong>
+                            </div>
+                            <div class="detail">
+                                <span>Dividend Yield:</span>
+                                <strong>1.2%</strong>
+                            </div>
+                            <div class="detail">
+                                <span>YTD Return:</span>
+                                <strong class="positive">+22.4%</strong>
+                            </div>
+                        </div>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span>4.9/5</span>
+                        </div>
+                    </div>
+
+                    <div class="investment-card">
+                        <div class="card-header">
+                            <h4>Agnico Eagle Mines</h4>
+                            <span class="ticker">AEM</span>
+                        </div>
+                        <div class="price-info">
+                            <span class="price">$58.73</span>
+                            <span class="change positive">+2.12%</span>
+                        </div>
+                        <div class="card-details">
+                            <div class="detail">
+                                <span>Market Cap:</span>
+                                <strong>$28.9B</strong>
+                            </div>
+                            <div class="detail">
+                                <span>Dividend Yield:</span>
+                                <strong>2.8%</strong>
+                            </div>
+                            <div class="detail">
+                                <span>YTD Return:</span>
+                                <strong class="positive">+19.8%</strong>
+                            </div>
+                        </div>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span>4.7/5</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Analysis Section -->
+    <section id="analysis" class="section dark-section">
+        <div class="container">
+            <h2><i class="fas fa-magnifying-glass-chart"></i> Market Analysis</h2>
+            <div class="analysis-grid">
+                <div class="analysis-card">
+                    <h3>Technical Analysis</h3>
+                    <div class="indicators">
+                        <div class="indicator">
+                            <span>RSI (14):</span>
+                            <strong>58.3</strong>
+                            <span class="badge neutral">Neutral</span>
+                        </div>
+                        <div class="indicator">
+                            <span>MACD:</span>
+                            <strong>Bullish</strong>
+                            <span class="badge positive">Buy Signal</span>
+                        </div>
+                        <div class="indicator">
+                            <span>Moving Avg (50):</span>
+                            <strong>$2,018</strong>
+                            <span class="badge positive">Above</span>
+                        </div>
+                        <div class="indicator">
+                            <span>Moving Avg (200):</span>
+                            <strong>$1,985</strong>
+                            <span class="badge positive">Above</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analysis-card">
+                    <h3>Fundamental Factors</h3>
+                    <ul class="factors-list">
+                        <li><i class="fas fa-check-circle positive"></i> Central bank gold purchases increasing</li>
+                        <li><i class="fas fa-check-circle positive"></i> Inflation concerns supporting demand</li>
+                        <li><i class="fas fa-exclamation-circle warning"></i> Strong USD creating headwinds</li>
+                        <li><i class="fas fa-check-circle positive"></i> Geopolitical tensions boosting safe-haven appeal</li>
+                        <li><i class="fas fa-exclamation-circle warning"></i> Rising interest rates pressuring prices</li>
+                    </ul>
+                </div>
+
+                <div class="analysis-card">
+                    <h3>Expert Recommendations</h3>
+                    <div class="recommendations">
+                        <div class="recommendation">
+                            <div class="rec-header">
+                                <span class="source">Goldman Sachs</span>
+                                <span class="badge positive">Buy</span>
+                            </div>
+                            <p>Target: $2,300 by Q4 2026</p>
+                        </div>
+                        <div class="recommendation">
+                            <div class="rec-header">
+                                <span class="source">JP Morgan</span>
+                                <span class="badge positive">Overweight</span>
+                            </div>
+                            <p>Target: $2,250 by year-end</p>
+                        </div>
+                        <div class="recommendation">
+                            <div class="rec-header">
+                                <span class="source">Bank of America</span>
+                                <span class="badge neutral">Hold</span>
+                            </div>
+                            <p>Target: $2,100 near-term</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Gold Market Intelligence</h4>
+                    <p>Your trusted source for gold market data, analysis, and investment insights.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#trends">Price Trends</a></li>
+                        <li><a href="#predictions">Predictions</a></li>
+                        <li><a href="#stocks">Investments</a></li>
+                        <li><a href="#analysis">Analysis</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Disclaimer</h4>
+                    <p>This website provides information for educational purposes only. Not financial advice. Always consult with a qualified financial advisor.</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Gold Market Intelligence. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
