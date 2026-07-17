@@ -1,4 +1,4 @@
-﻿import express from "express";
+import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
@@ -6,12 +6,12 @@ import dotenv from "dotenv";
 import fs from "fs";
 import { createRequire } from "module";
 import ExcelJS from "exceljs";
-// â”€â”€â”€ New feature routers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── New feature routers ──────────────────────────────────────────────────────
 import scenarioRouter from "./src/routes/scenarioRoutes.js";
 import clientProfileRouter from "./src/routes/clientProfileRoutes.js";
 const _require = createRequire(import.meta.url);
 const XLSX = _require("xlsx");
-// WatsonX helper â€” inline (no module dependency needed at server layer)
+// WatsonX helper — inline (no module dependency needed at server layer)
 async function watsonxAskAI(prompt: string, opts: { maxTokens?: number; temperature?: number } = {}): Promise<{ text: string; provider: string }> {
   const KEY = process.env.WATSONX_API_KEY; const PID = process.env.WATSONX_PROJECT_ID;
   const REGION = process.env.WATSONX_REGION || 'us-south'; const MODEL = process.env.WATSONX_TEXT_MODEL || 'ibm/granite-3-8b-instruct';
@@ -24,10 +24,9 @@ async function watsonxAskAI(prompt: string, opts: { maxTokens?: number; temperat
   const d = await r.json() as any; return { text: d.results?.[0]?.generated_text?.trim()||'', provider: 'watsonx' };
 }
 
-dotenv.config({ path: ".env.local", override: true });
-dotenv.config({ override: false });
+dotenv.config();
 
-// â”€â”€â”€ WatsonX BOM mapping (IBM-first per GLOBAL_RULES Â§1) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── WatsonX BOM mapping (IBM-first per GLOBAL_RULES §1) ─────────────────────
 async function mapMaterialsWithWatsonx(materials: any[]): Promise<any[] | null> {
   const WATSONX_KEY = process.env.WATSONX_API_KEY;
   const WATSONX_PID = process.env.WATSONX_PROJECT_ID;
@@ -54,7 +53,7 @@ const PORT = 3000;
 
 app.use(express.json({ limit: '10mb' }));
 
-// â”€â”€â”€ Feature routers (must be before INITIAL_MATERIALS default routes) â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Feature routers (must be before INITIAL_MATERIALS default routes) ────────
 app.use("/", scenarioRouter);
 app.use("/", clientProfileRouter);
 
@@ -1055,12 +1054,12 @@ const getLocalStrategyMemo = (materials: any[], simulatedRates: any, industry: s
     if (rates.aluminum > 0 || rates.nickel > 0) {
       recommendations.push(`- **Action: Establish Safeguard Agreements for Aluminum Foil and Borosilicate Vials**
   - **Market Signal:** Active inflationary pressures on Aluminum Foil (${rates.aluminum}%) / Glass Vials (${rates.nickel}%).
-  - **Recommendation:** Standardize price-ceiling agreements with Schott Glass India and Hindalco. Blister foil and glass vials represent mandatory packaging itemsâ€”any supply bottleneck stops product dispatch.`);
+  - **Recommendation:** Standardize price-ceiling agreements with Schott Glass India and Hindalco. Blister foil and glass vials represent mandatory packaging items—any supply bottleneck stops product dispatch.`);
     }
 
     return `
 # SAP STRATEGIC PROCUREMENT MEMORANDUM (PHARMACEUTICAL ADVISORY)
-**To:** Director of Global Sourcing â€” Sun Pharmaceutical Industries  
+**To:** Director of Global Sourcing — Sun Pharmaceutical Industries  
 **From:** SAP Procurement Commodity Analytics Engine (Local Fallback active)  
 **Date:** July 2026  
 **Subject:** S/4HANA Pharmaceutical Sourcing & Active Chemical Risk Mitigation  
@@ -1134,7 +1133,7 @@ ${recommendations.join("\n\n")}
 
     return `
 # SAP STRATEGIC PROCUREMENT MEMORANDUM (RETAIL SOURCING)
-**To:** VP of Global Sourcing â€” Reliance Retail Group  
+**To:** VP of Global Sourcing — Reliance Retail Group  
 **From:** SAP Procurement Commodity Analytics Engine (Local Fallback active)  
 **Date:** July 2026  
 **Subject:** S/4HANA Retail Sourcing Optimization & Fiber-Agri Sourcing Advisory  
@@ -1219,7 +1218,7 @@ ${recommendations.join("\n\n")}
 
   return `
 # SAP STRATEGIC PROCUREMENT MEMORANDUM (AUTOMOTIVE ADVISORY)
-**To:** Director of Supply Chain & Global Sourcing â€” Maruti Suzuki Corp.  
+**To:** Director of Supply Chain & Global Sourcing — Maruti Suzuki Corp.  
 **From:** SAP Procurement Commodity Analytics Engine (Local Fallback active)  
 **Date:** July 2026  
 **Subject:** S/4HANA Automobile Procurement Optimization & Raw Metal Risk Mitigation  
@@ -1259,9 +1258,9 @@ ${recommendations.join("\n\n")}
 `;
 };
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 // SUPPLY RISK ENGINE
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 
 type RiskLevel = "Low" | "Medium" | "High" | "Critical";
 type RecommendationPriority = "Critical" | "High" | "Medium" | "Low";
@@ -1271,7 +1270,7 @@ const SERVER_START_ISO = new Date().toISOString();
 
 /**
  * Deterministic lead-time lookup (days) derived from vendor country and material
- * category â€” no new data fields required.  Values are calibrated for the SAP
+ * category — no new data fields required.  Values are calibrated for the SAP
  * PTP world (e.g. domestic India = short; cross-Pacific = long).
  */
 function estimateLeadTimeDays(vendorCountry: string, category: string): number {
@@ -1329,22 +1328,22 @@ function inferIsSingleSource(mat: {
   if (cat.includes("turbine") || cat.includes("propulsion"))         return true;
   if (cat.includes("wafer") || cat.includes("semiconductor"))        return true;
 
-  // Single vendor from a high-risk country â†’ single-source
+  // Single vendor from a high-risk country → single-source
   if (!hasMulti && ["china", "taiwan", "russia"].includes(country)) return true;
 
   return !hasMulti;
 }
 
 /**
- * Convert geo-risk catalog score (1â€“5 scale) to 0â€“100.
+ * Convert geo-risk catalog score (1–5 scale) to 0–100.
  * Uses the GEOPOLITICAL_RISKS_MOCK / per-industry risk catalog.
  */
 function normaliseGeoScore(rawScore: number): number {
-  // Catalog is 1â€“5; linearly scale to 0â€“100
+  // Catalog is 1–5; linearly scale to 0–100
   return Math.round(((rawScore - 1) / 4) * 100);
 }
 
-/** Compute riskScore (0â€“100) and riskLevel from the three inputs. */
+/** Compute riskScore (0–100) and riskLevel from the three inputs. */
 function computeRiskScore(
   leadTimeDays: number,
   maxLeadTime: number,
@@ -1380,7 +1379,7 @@ function enrichMaterialsWithRisk(materials: any[], riskCatalog: any[]): any[] {
   return materials.map((m, idx) => {
     const leadTimeDays = leadTimes[idx];
 
-    // Geo risk: look up by vendor country in the risk catalog (1â€“5 scale â†’ 0â€“100)
+    // Geo risk: look up by vendor country in the risk catalog (1–5 scale → 0–100)
     const catalogEntry = riskCatalog.find(
       (r: { country: string }) =>
         r.country?.toLowerCase() === (m.vendorCountry || "").toLowerCase()
@@ -1406,7 +1405,7 @@ function enrichMaterialsWithRisk(materials: any[], riskCatalog: any[]): any[] {
 
 /**
  * Generate deterministic procurement recommendations from enriched materials.
- * Sorted: Critical â†’ High â†’ Medium â†’ Low.
+ * Sorted: Critical → High → Medium → Low.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- raw enriched row data
 function generateRecommendations(enrichedMaterials: any[]): object[] {
@@ -1428,7 +1427,7 @@ function generateRecommendations(enrichedMaterials: any[]): object[] {
     const matName = m.name || m.description || matId;
     const cat     = m.category || "Procurement";
 
-    // Rule 1 â€” Single-source exposure
+    // Rule 1 — Single-source exposure
     if (m.isSingleSource) {
       recs.push({
         id: `rule1_${matId}`,
@@ -1437,13 +1436,13 @@ function generateRecommendations(enrichedMaterials: any[]): object[] {
         category: cat,
         riskLevel: m.riskLevel,
         priority: "High",
-        message: `Qualify alternate supplier for ${matName} (${cat}) â€” currently single-sourced.`,
+        message: `Qualify alternate supplier for ${matName} (${cat}) — currently single-sourced.`,
         actionLabel: "Qualify Supplier",
         timestamp: SERVER_START_ISO,
       });
     }
 
-    // Rule 2 â€” Critical risk expedite
+    // Rule 2 — Critical risk expedite
     if (m.riskLevel === "Critical") {
       recs.push({
         id: `rule2_${matId}`,
@@ -1452,13 +1451,13 @@ function generateRecommendations(enrichedMaterials: any[]): object[] {
         category: cat,
         riskLevel: m.riskLevel,
         priority: "Critical",
-        message: `Expedite procurement or increase safety stock for ${matName} â€” risk score ${m.riskScore}/100.`,
+        message: `Expedite procurement or increase safety stock for ${matName} — risk score ${m.riskScore}/100.`,
         actionLabel: "Expedite Order",
         timestamp: SERVER_START_ISO,
       });
     }
 
-    // Rule 3 â€” High lead-time buffer
+    // Rule 3 — High lead-time buffer
     if (m.leadTimeDays > 60) {
       recs.push({
         id: `rule3_${matId}`,
@@ -1467,13 +1466,13 @@ function generateRecommendations(enrichedMaterials: any[]): object[] {
         category: cat,
         riskLevel: m.riskLevel,
         priority: "Medium",
-        message: `Negotiate safety stock buffer for ${matName} â€” lead time is ${m.leadTimeDays} days.`,
+        message: `Negotiate safety stock buffer for ${matName} — lead time is ${m.leadTimeDays} days.`,
         actionLabel: "Review Buffer",
         timestamp: SERVER_START_ISO,
       });
     }
 
-    // Rule 4 â€” Elevated geopolitical exposure
+    // Rule 4 — Elevated geopolitical exposure
     if (m.geopoliticalRiskScore > 70) {
       recs.push({
         id: `rule4_${matId}`,
@@ -1482,14 +1481,14 @@ function generateRecommendations(enrichedMaterials: any[]): object[] {
         category: cat,
         riskLevel: m.riskLevel,
         priority: "High",
-        message: `Diversify sourcing region for ${matName} â€” geopolitical risk score ${m.geopoliticalRiskScore}/100.`,
+        message: `Diversify sourcing region for ${matName} — geopolitical risk score ${m.geopoliticalRiskScore}/100.`,
         actionLabel: "Diversify Region",
         timestamp: SERVER_START_ISO,
       });
     }
   }
 
-  // Sort by priority: Critical â†’ High â†’ Medium â†’ Low
+  // Sort by priority: Critical → High → Medium → Low
   recs.sort(
     (a, b) =>
       PRIORITY_ORDER.indexOf(a.priority) - PRIORITY_ORDER.indexOf(b.priority)
@@ -1498,11 +1497,11 @@ function generateRecommendations(enrichedMaterials: any[]): object[] {
   return recs;
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 // API Endpoints
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 
-// 1. Get current list of materials â€” now includes riskScore, riskLevel, leadTimeDays,
+// 1. Get current list of materials — now includes riskScore, riskLevel, leadTimeDays,
 //    geopoliticalRiskScore, and isSingleSource on every record.
 app.get("/api/materials", (req, res) => {
   const industry = (req.query.industry as string) || "automobile";
@@ -1530,7 +1529,7 @@ app.get("/api/geopolitical-risks", (req, res) => {
   res.json(data.risks);
 });
 
-// 3b. Recommendations endpoint â€” deterministic rules engine over enriched materials
+// 3b. Recommendations endpoint — deterministic rules engine over enriched materials
 app.get("/api/recommendations", (req, res) => {
   const industry = (req.query.industry as string) || "automobile";
   const defaults = getDefaults(industry);
@@ -1540,7 +1539,7 @@ app.get("/api/recommendations", (req, res) => {
   res.json(generateRecommendations(enriched));
 });
 
-// 3c. BP Evaluation endpoint â€” vendor concentration, scoring, and contract dependency analysis
+// 3c. BP Evaluation endpoint — vendor concentration, scoring, and contract dependency analysis
 app.get("/api/bp-evaluation", (req, res) => {
   const industry = (req.query.industry as string) || "automobile";
   const defaults = getDefaults(industry);
@@ -1550,35 +1549,35 @@ app.get("/api/bp-evaluation", (req, res) => {
   res.json(computeBPEvaluation(enriched, industry));
 });
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 // BP EVALUATION ENGINE
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 
 /**
  * Compute a full BP (Business Partner) evaluation from enriched materials.
- * All figures are derived at runtime from the seed fields â€” no extra DB columns.
+ * All figures are derived at runtime from the seed fields — no extra DB columns.
  *
  * Delivery performance model (derived from inventory fields):
- *   onTimeRate      = clamp(inventoryUsed / inventoryOrdered Ã— 100, 0, 100)
- *   underDelivery   = clamp((inventoryOrdered - inventoryUsed) / inventoryOrdered Ã— 100, 0, 100)
- *   overDelivery    = clamp(inventoryBufferStock / inventoryOrdered Ã— 100, 0, 100)
- *   compositeScore  = 0.5 Ã— onTimeRate + 0.3 Ã— (100 - underDelivery) + 0.2 Ã— (100 - overDelivery)
+ *   onTimeRate      = clamp(inventoryUsed / inventoryOrdered × 100, 0, 100)
+ *   underDelivery   = clamp((inventoryOrdered - inventoryUsed) / inventoryOrdered × 100, 0, 100)
+ *   overDelivery    = clamp(inventoryBufferStock / inventoryOrdered × 100, 0, 100)
+ *   compositeScore  = 0.5 × onTimeRate + 0.3 × (100 - underDelivery) + 0.2 × (100 - overDelivery)
  *
  * Contract type inferred from vendor spend share:
- *   >20% or >3 materials â†’ Scheduling Agreement
- *   >10%                 â†’ Long-Term Contract
- *   >5%                  â†’ Framework OLA
- *   else                 â†’ Spot Purchase
+ *   >20% or >3 materials → Scheduling Agreement
+ *   >10%                 → Long-Term Contract
+ *   >5%                  → Framework OLA
+ *   else                 → Spot Purchase
  *
  * Concentration risk uses the Herfindahl-Hirschman Index (HHI):
- *   HHI = Î£(spendShare_i Ã— 100)Â²  â†’ 0â€“10 000
- *   â‰¤1500: Low  |  â‰¤2500: Moderate  |  â‰¤5000: High  |  >5000: Critical
+ *   HHI = Σ(spendShare_i × 100)²  → 0–10 000
+ *   ≤1500: Low  |  ≤2500: Moderate  |  ≤5000: High  |  >5000: Critical
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- raw enriched data from xlsx
 function computeBPEvaluation(enriched: any[], industry: string) {
   const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
-  // â”€â”€ Step 1: Per-vendor aggregation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Step 1: Per-vendor aggregation ─────────────────────────────────────────
   const vendorMap = new Map<string, {
     vendorName: string;
     vendorCountry: string;
@@ -1624,7 +1623,7 @@ function computeBPEvaluation(enriched: any[], industry: string) {
 
   const grandTotalSpend = Array.from(vendorMap.values()).reduce((s, v) => s + v.totalSpend, 0) || 1;
 
-  // â”€â”€ Step 2: Build VendorScore array â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Step 2: Build VendorScore array ────────────────────────────────────────
   const vendorScores = Array.from(vendorMap.values()).map((v) => {
     const spendShare     = v.totalSpend / grandTotalSpend;
     const onTimeAvg      = v.rowCount > 0 ? v.onTimeAccum / v.rowCount : 80;
@@ -1661,7 +1660,7 @@ function computeBPEvaluation(enriched: any[], industry: string) {
     return so !== 0 ? so : b.totalSpend - a.totalSpend;
   });
 
-  // â”€â”€ Step 3: Contract Dependencies â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Step 3: Contract Dependencies ──────────────────────────────────────────
   const contractDependencies = Array.from(vendorMap.values()).map((v) => {
     const spendShare = v.totalSpend / grandTotalSpend;
     let contractType: "Scheduling Agreement" | "Long-Term Contract" | "Framework OLA" | "Spot Purchase";
@@ -1682,7 +1681,7 @@ function computeBPEvaluation(enriched: any[], industry: string) {
   });
   contractDependencies.sort((a, b) => b.annualValue - a.annualValue);
 
-  // â”€â”€ Step 4: Vendor Concentration (HHI) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Step 4: Vendor Concentration (HHI) ────────────────────────────────────
   const vendorHHI = Math.round(
     Array.from(vendorMap.values()).reduce((acc, v) => {
       const share = (v.totalSpend / grandTotalSpend) * 100;
@@ -1718,8 +1717,8 @@ function computeBPEvaluation(enriched: any[], industry: string) {
     top3SharePct:  Math.round(top3VendorShare * 10) / 10,
   };
 
-  // â”€â”€ Step 5: Customer-side concentration proxy (distribution by region) â”€â”€â”€â”€â”€
-  // Derive from vendor countries as a proxy â€” group vendor spend by country region
+  // ── Step 5: Customer-side concentration proxy (distribution by region) ─────
+  // Derive from vendor countries as a proxy — group vendor spend by country region
   const regionMap = new Map<string, { spend: number; countries: Set<string> }>();
   for (const m of enriched) {
     const country = (m.vendorCountry || "Unknown").trim();
@@ -1758,7 +1757,7 @@ function computeBPEvaluation(enriched: any[], industry: string) {
     top3SharePct:  Math.round(top3RegionShare * 10) / 10,
   };
 
-  // â”€â”€ Step 6: KPIs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Step 6: KPIs ───────────────────────────────────────────────────────────
   const atRiskVendors        = vendorScores.filter(v => v.status === "At Risk").length;
   const overDepVendors       = vendorScores.filter(v => v.isOverDependency).length;
   const avgVendorScore       = vendorScores.length > 0
@@ -1869,24 +1868,24 @@ app.post("/api/excel/update-risks", (req, res) => {
   }
 });
 
-// 4. Map uploaded BOMs/Materials to raw commodities â€” WatsonX first, Gemini fallback
+// 4. Map uploaded BOMs/Materials to raw commodities — WatsonX first, Gemini fallback
 app.post("/api/analyze-boms", async (req, res) => {
   const { materials } = req.body;
   if (!materials || !Array.isArray(materials)) {
     return res.status(400).json({ error: "Missing materials array in request body" });
   }
 
-  // Tier 1: IBM WatsonX (GLOBAL_RULES Â§1)
+  // Tier 1: IBM WatsonX (GLOBAL_RULES §1)
   const wxResult = await mapMaterialsWithWatsonx(materials);
   if (wxResult) {
-    console.log("[AI] âœ… WatsonX BOM mapping succeeded");
+    console.log("[AI] ✅ WatsonX BOM mapping succeeded");
     return res.json(wxResult);
   }
-  console.log("[AI] WatsonX unavailable â†’ trying Gemini");
+  console.log("[AI] WatsonX unavailable → trying Gemini");
 
   const ai = getGeminiClient();
   if (!ai) {
-    console.log("[AI] No Gemini key either â†’ local keyword mapping");
+    console.log("[AI] No Gemini key either → local keyword mapping");
     const mapped = getLocalMaterialMapping(materials);
     return res.json(mapped);
   }
@@ -2038,9 +2037,9 @@ Use markdown headings, tables, and bullet points. Make it read like a premium, h
 });
 
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-// INDUSTRY REGISTRY â€” shared source of truth (mirrors scripts/seedIndustryData.ts)
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
+// INDUSTRY REGISTRY — shared source of truth (mirrors scripts/seedIndustryData.ts)
+// ─────────────────────────────────────────────────────────────────────────────
 const INDUSTRY_REGISTRY = [
   { id: "automobile",    slug: "automobile",    label: "Automobile (Maruti Suzuki)",    companyCode: "MSIN", currency: "INR", commodityKeys: ["Copper","Steel HRC","Aluminum","Nickel"] },
   { id: "pharma",        slug: "pharma",        label: "Pharma (Sun Pharma)",            companyCode: "SPIL", currency: "INR", commodityKeys: ["API Chemicals (Phenol)","Organic Solvents","Aluminum Foil","Borosilicate Glass"] },
@@ -2252,1660 +2251,7 @@ app.post("/api/industry/:slug/refresh", async (req, res) => {
   }
 });
 
-
-// ═══════════════════════════════════════════════════════════════════════════════════
-// PAGE 2 — SAP Clean Core ABAP Suite (SAPCleanCore integration — routes below)
-// ═══════════════════════════════════════════════════════════════════════════════════
-
-const mockS4HanaMetadata = {
-  P2P: {
-    tables: ["EKKO", "EKPO", "LFA1", "LFB1", "MARC", "RBKP", "RSEG"],
-    tcodes: ["ME21N", "ME22N", "ME23N", "MIRO", "MIGO", "ME2L", "BP"],
-    cds: ["I_PurchaseOrderAPI01", "I_PurchasingDocument", "I_Supplier", "I_MaterialPlant"],
-    badis: ["ME_PROCESS_PO_CUST", "ME_HOLD_PO", "ME_DEFINE_CALCTYPE"],
-    apis: ["API_PURCHASEORDER_PROCESS_SRV", "API_SUPPLIER_INVOICE_PROCESS_SRV"]
-  },
-  OTC: {
-    tables: ["VBAK", "VBAP", "KNA1", "KNB1", "VBRK", "VBRP", "LIKP", "LIPS"],
-    tcodes: ["VA01", "VA02", "VA03", "VL01N", "VL02N", "VF01", "VF03", "BP"],
-    cds: ["I_SalesOrder", "I_SalesOrderItem", "I_Customer", "I_BillingDocumentItem"],
-    badis: ["SD_SALES_BOOKING", "LE_SHP_DELIVERY_PROC", "BADI_SD_BILLING"],
-    apis: ["API_SALES_ORDER_SRV", "API_OUTBOUND_DELIVERY_SRV", "API_BILLING_DOCUMENT_SRV"]
-  },
-  FINANCE: {
-    tables: ["BKPF", "BSEG", "ACDOCA", "SKA1", "SKB1", "CEPCT"],
-    tcodes: ["FB01", "FB02", "FB03", "FAGLL03", "FS00", "F-02"],
-    cds: ["I_JournalEntry", "I_GLAccountLineItem", "I_OperationalAcctgDocItem"],
-    badis: ["BADI_ACC_DOCUMENT", "FI_HEADER_SUBSTITUTION", "FI_ITEMS_VALIDATION"],
-    apis: ["API_JOURNALENTRYCREATE_REQUEST_S_IN", "API_GLACCOUNT_SRV"]
-  }
-};
-
-// Help system instructions
-const SAP_ARCHITECT_SYSTEM_INSTRUCTION = `
-You are an expert SAP Principal Solution Architect, S/4HANA Technical Architect, Senior ABAP Developer (ABAP 7.4+), and Extensibility Expert.
-Your purpose is to analyze Business Requirements or Functional Specifications and produce a production-ready, clean, optimal SAP S/4HANA Solution in modern ABAP 7.4+ syntax that respects SAP Clean Core principles.
-
-### SAP Clean Core & Extensibility Rules:
-1. Always prefer standard solutions. Prioritize recommendations in this order:
-   - Standard SAP Configuration / standard transaction options
-   - Released APIs / Standard OData Services
-   - Released CDS Views (e.g. I_SalesOrder instead of direct queries on VBAK)
-   - Released BAdIs (using Enhancement Spots, Implementation Classes, filter values, and interfaces)
-   - In-App Extensibility or Custom Fields and Logic
-   - Custom Development (using RAP, CDS, and modern ABAP classes) only when no standard exists.
-2. Strictly forbid direct modification of standard SAP tables or code.
-3. Every custom ABAP code generated MUST be written in ABAP 7.4+ modern syntax:
-   - Inline declarations: DATA(lv_var) = ...
-   - Modern Open SQL: comma-separated fields, host variables prefixed with @ (e.g., SELECT connid, fldate FROM sflight INTO TABLE @DATA(lt_flights) WHERE carrid = @lv_carrid)
-   - Constructor operators: VALUE #( ... ), NEW #( ... ), REDUCE, CORRESPONDING, FILTER
-   - Avoid obsolete keywords: MOVE, OCCURS, LIKE (to non-type), CLASS... DEFINITION DEFERRED (unless necessary), SELECT * (prefer explicit fields), HEADER LINE.
-   - ABAP Test Cockpit (ATC) and SAP Code Inspector (SCI) compliant: clean error handling, check sy-subrc, raise exceptions, avoid nested SELECTs.
-
-### JSON Output Schema Specification:
-You must return your analysis strictly in JSON format matching the following schema. Do not wrap it in markdown code blocks unless parsing is handled, but to be completely safe, your entire output must be a single, valid JSON object with these exact keys:
-
-{
-  "businessArea": "string (Matches input businessArea)",
-  "developmentObject": "string (If input developmentObject is 'AUTO_DECIDE', you MUST analyze the document/requirements and determine the most compliant S/4HANA development object type required, e.g., 'BADI', 'RAP_BO', 'REPORT', 'CDS_VIEW', 'ENHANCEMENT', 'CLASS', 'ODATA_SERVICE', etc. and output it here. Otherwise, matches the requested object type)",
-  "module": "string (e.g. MM, SD, FI, PP)",
-  "sapTransactions": ["string (T-Codes impacted/related)"],
-  "impactedTables": ["string (SAP standard tables e.g. VBAK, EKKO)"],
-  "requirementTitle": "string (Descriptive title of the specification)",
-  "standardObjects": [
-    {
-      "id": "string",
-      "name": "string (e.g. I_SalesOrder, BADI_ACC_DOCUMENT)",
-      "type": "string (e.g. CDS View, BAdI, API, T-Code, SAP Note)",
-      "description": "string",
-      "recommendationReason": "string explaining why this fits Clean Core",
-      "cleanCoreScore": 100, // integer 0-100
-      "upgradeSafety": "Excellent", // Excellent, Good, Medium, Low
-      "performanceRating": "High", // High, Medium, Low
-      "isSapRecommended": true
-    }
-  ],
-  "techSpec": {
-    "overview": "string (high-level design)",
-    "businessRequirement": "string (extracted core business need)",
-    "solutionDesign": "string (detailed design detailing how objects interact)",
-    "architectureNotes": "string (clean core adherence justification)",
-    "objectList": [
-      {"name": "string", "type": "string", "description": "string"}
-    ],
-    "programFlow": "string (detailed description of flow logic)",
-    "pseudocode": "string (formatted logic sequence)",
-    "errorHandling": "string (exception handling and message class strategy)",
-    "authorizations": "string (authorization objects needed)",
-    "performanceNotes": "string (SQL optimizations, caching, parallel processing)",
-    "securityReview": "string (preventing SQL injection, authorization checks)",
-    "deploymentSteps": ["string (activation sequence)"],
-    "rollbackPlan": "string",
-    "transportStrategy": "string",
-    "testingStrategy": "string"
-  },
-  "abapCode": {
-    "code": "string (COMPLETE, production-ready modern ABAP code including class definition, implementation or report structure. If RAP is requested, include CDS, BDEF, and Class codes inside clear sections)",
-    "cleanCoreScore": 95,
-    "atcComplianceChecklist": ["string (e.g. Readability check, sy-subrc checked, no obsolete syntax)"],
-    "s4HanaReadinessNotes": "string",
-    "improvementsApplied": ["string"]
-  },
-  "extensibilityGuide": {
-    "whyRequired": "string",
-    "spotName": "string",
-    "badiName": "string",
-    "implementationClass": "string",
-    "filterValues": "string",
-    "interfaceName": "string",
-    "sproPath": "string",
-    "steps": ["string (step 1, step 2...)"]
-  },
-  "odataRapGuide": {
-    "isRap": true,
-    "cdsRootView": "string",
-    "projectionView": "string",
-    "behaviorDefinition": "string",
-    "behaviorImplementation": "string",
-    "serviceDefinition": "string",
-    "serviceBinding": "string",
-    "metadata": "string",
-    "entityName": "string",
-    "entitySetName": "string",
-    "steps": ["string (detailed step-by-step creation)"]
-  },
-  "sandbox": {
-    "testData": [
-      {
-        "tableName": "string (e.g. SFLIGHT, EKKO)",
-        "records": [
-          {"field1": "val1", "field2": "val2"}
-        ]
-      }
-    ],
-    "executionSteps": ["string (steps to run)"],
-    "expectedOutput": "string (expected console logging or table updates)",
-    "edgeCases": ["string (edge cases to check)"],
-    "unitTests": "string (ABAP Unit class definition and implementation)",
-    "simulatedLogs": ["string (simulated processing log lines)"],
-    "runtimeStats": {
-      "cpuTimeMs": 15,
-      "dbReads": 5,
-      "dbWrites": 0,
-      "memoryKb": 124
-    }
-  },
-  "visualDiagrams": {
-    "flowchartSvg": "string (A beautiful valid SVG flowchart with rects, arrows, and texts representing the program flow, colored with premium slate and teal accents)",
-    "sequenceSvg": "string (A beautiful valid SVG sequence diagram showing interactions between User, UI5, Gateway, and Backend Core)",
-    "dataFlowSvg": "string (A beautiful valid SVG diagram showing data pipeline from Database to CDS, RAP BO, and Service Binding)"
-  }
-}
-`;
-
-// --- OFFLINE/RESILIENT GRADUAL FALLBACK HELPERS ---
-
-async function callGeminiWithRetry(aiCallFn: () => Promise<any>, retries = 3, delayMs = 1000): Promise<any> {
-  for (let i = 0; i < retries; i++) {
-    try {
-      return await aiCallFn();
-    } catch (error: any) {
-      const errorStr = String(error?.message || error || "");
-      const isTransient = errorStr.includes("503") || 
-                          errorStr.includes("UNAVAILABLE") || 
-                          errorStr.includes("high demand") ||
-                          errorStr.includes("overloaded") ||
-                          error?.status === 503;
-      if (isTransient && i < retries - 1) {
-        console.warn(`Gemini API returned transient error (attempt ${i + 1}/${retries}). Retrying in ${delayMs}ms...`, error);
-        await new Promise((resolve) => setTimeout(resolve, delayMs));
-        delayMs *= 2; // exponential backoff
-        continue;
-      }
-      throw error;
-    }
-  }
-}
-
-function getOfflineFallbackAnalysis(businessArea: string, developmentObject: string, manualRequirements: string) {
-  const areaKey = (["P2P", "OTC", "FINANCE"].includes(businessArea) ? businessArea : "OTC") as "P2P" | "OTC" | "FINANCE";
-  const meta = mockS4HanaMetadata[areaKey] || mockS4HanaMetadata.OTC;
-  
-  let decidedObject = developmentObject;
-  if (developmentObject === 'AUTO_DECIDE') {
-    const reqLower = (manualRequirements || "").toLowerCase();
-    if (reqLower.includes("badi") || reqLower.includes("enhancement") || reqLower.includes("exit")) {
-      decidedObject = "BADI";
-    } else if (reqLower.includes("rap") || reqLower.includes("odata") || reqLower.includes("service") || reqLower.includes("bo")) {
-      decidedObject = "RAP_BO";
-    } else if (reqLower.includes("cds") || reqLower.includes("view")) {
-      decidedObject = "CDS_VIEW";
-    } else if (reqLower.includes("class") || reqLower.includes("oo")) {
-      decidedObject = "CLASS";
-    } else if (reqLower.includes("api") || reqLower.includes("rest") || reqLower.includes("soap")) {
-      decidedObject = "API";
-    } else {
-      decidedObject = "REPORT";
-    }
-  }
-
-  const title = manualRequirements && manualRequirements.length > 5 
-    ? (manualRequirements.substring(0, 50) + "...") 
-    : `Custom S/4HANA ${decidedObject || "Enhancement"} Specification`;
-
-  const standardObjects = [
-    {
-      id: "OBJ01",
-      name: meta.cds[0] || "I_SalesOrder",
-      type: "CDS View",
-      description: `Released S/4HANA stable view for querying standard ${areaKey} transactional details.`,
-      recommendationReason: "Direct table SELECTs are prohibited. Querying released CDS views ensures clean core compatibility.",
-      cleanCoreScore: 100,
-      upgradeSafety: "Excellent",
-      performanceRating: "High",
-      isSapRecommended: true
-    },
-    {
-      id: "OBJ02",
-      name: meta.badis[0] || "BADI_SD_BILLING",
-      type: "BAdI Definition",
-      description: `Standard enhancement spot interface to inject custom validation logic without core modification.`,
-      recommendationReason: "SAP standard BAdIs allow adding custom field/logic validations securely.",
-      cleanCoreScore: 100,
-      upgradeSafety: "Excellent",
-      performanceRating: "High",
-      isSapRecommended: true
-    }
-  ];
-
-  const abapCode = {
-    code: `*----------------------------------------------------------------------*
-* CLASS lcl_clean_core_handler DEFINITION
-*----------------------------------------------------------------------*
-CLASS lcl_clean_core_handler DEFINITION FINAL.
-  PUBLIC SECTION.
-    TYPES: BEGIN OF ty_result,
-             document_id TYPE string,
-             status      TYPE string,
-           END OF ty_result.
-    TYPES: tt_results TYPE STANDARD TABLE OF ty_result WITH EMPTY KEY.
-
-    METHODS execute_business_logic
-      IMPORTING
-        iv_id             TYPE string
-      RETURNING
-        VALUE(rt_results) TYPE tt_results.
-ENDCLASS.
-
-*----------------------------------------------------------------------*
-* CLASS lcl_clean_core_handler IMPLEMENTATION
-*----------------------------------------------------------------------*
-CLASS lcl_clean_core_handler IMPLEMENTATION.
-  METHOD execute_business_logic.
-    " Clean Core compliant host variables & inline declarations
-    SELECT DISTINCT key_field FROM ${meta.cds[0] || 'I_SalesOrder'}
-      WHERE status_field = 'A'
-      INTO TABLE @DATA(lt_data).
-
-    IF sy-subrc = 0.
-      rt_results = VALUE #( FOR <fs> IN lt_data (
-        document_id = <fs>-key_field
-        status      = 'APPROVED'
-      ) ).
-    ENDIF.
-  ENDMETHOD.
-ENDCLASS.`,
-    cleanCoreScore: 95,
-    atcComplianceChecklist: [
-      "Released CDS View utilized instead of standard direct table access",
-      "Modern Open SQL syntax with @ host variable prefixing",
-      "Inline variables definition utilized to reduce footprint",
-      "sy-subrc verified after dataset selections",
-      "Constructor operator VALUE utilized inside LOOP/FOR structures"
-    ],
-    s4HanaReadinessNotes: "The program compiles successfully within S/4HANA cloud. Obsolete statement checks verified."
-  };
-
-  const techSpec = {
-    overview: "This is a clean core compliant technical specification generated in offline resilient mode due to high AI service demand.",
-    businessRequirement: manualRequirements || "Implement standard business enhancements for SAP S/4HANA area.",
-    solutionDesign: `The system listens to transactional state updates. Rather than changing SAP standard, we leverage released interface view ${meta.cds[0]} and trigger code via Enhancement Spot ${meta.badis[0]}.`,
-    architectureNotes: "Strict clean core implementation tiering applied. Direct modification of standard tables is completely prevented.",
-    objectList: [
-      { name: "LCL_CLEAN_CORE_HANDLER", type: "ABAP Class", description: "Main controller logic for clean core validation." }
-    ],
-    programFlow: "1. Client triggers transaction.\n2. BAdI interceptor triggers validation method.\n3. Custom logic queries released API CDS View.\n4. System processes data inline.",
-    pseudocode: "CHECK authorization.\nSELECT fields FROM Released CDS View.\nIF subrc = 0.\n  Map data via constructor operators.\nENDIF.",
-    errorHandling: "Using standard SAP CX_STATIC_EXCEPTION handlers. Error logs are registered via BAL_LOG_MSG_ADD.",
-    authorizations: "Authority object S_DEVELOP and transaction key specific S_TCODE assertions implemented.",
-    performanceNotes: "Result sets are explicitly buffered. Explicit projections applied to query fields.",
-    securityReview: "Prevented direct SQL injection by enforcing host parameters. Input parameters are verified.",
-    deploymentSteps: [
-      "1. Activate CDS projection metadata structures.",
-      "2. Create custom implementation class in package $TMP.",
-      "3. Register implementation under BAdI Definition."
-    ],
-    rollbackPlan: "Deactivate custom BAdI implementation class. SAP Standard flow resumes immediately.",
-    transportStrategy: "Transport category workbench task assigned to standard customization transport.",
-    testingStrategy: "Execute standard suite LTC_UNIT_TESTS class to assert success cases."
-  };
-
-  const sandbox = {
-    testData: [
-      {
-        tableName: meta.tables[0] || "VBAK",
-        records: [
-          { key_field: "DOC-1001", status_field: "A", customer: "CUST-A" },
-          { key_field: "DOC-1002", status_field: "B", customer: "CUST-B" },
-          { key_field: "DOC-1003", status_field: "A", customer: "CUST-A" }
-        ]
-      }
-    ],
-    executionSteps: [
-      "1. Seeds simulated database container with local documents.",
-      "2. Compiles local pseudo-kernel syntax tree.",
-      "3. Executes ABAP Unit assertion suite."
-    ],
-    expectedOutput: "Successful return of 2 processed entries. ATC compliance checklist is perfectly fulfilled.",
-    edgeCases: [
-      "No matching records found in table",
-      "Empty validation input parameters",
-      "Duplicate key exception scenario"
-    ],
-    unitTests: `CLASS ltc_unit_tests DEFINITION FOR TESTING
-  DURATION SHORT RISK LEVEL HARMLESS.
-  PRIVATE SECTION.
-    METHODS: test_success_flow FOR TESTING.
-ENDCLASS.
-
-CLASS ltc_unit_tests IMPLEMENTATION.
-  METHOD test_success_flow.
-    DATA(lo_cut) = NEW lcl_clean_core_handler( ).
-    DATA(lt_res) = lo_cut->execute_business_logic( 'DOC-1001' ).
-    cl_abap_unit_assert=>assert_not_initial( lt_res ).
-  ENDMETHOD.
-ENDCLASS.`,
-    simulatedLogs: [
-      "[INFO] Booting S/4HANA Offline Resilient Mode...",
-      `[DB] Mock Table ${meta.tables[0]} seeded.`,
-      "[INFO] Executed successfully."
-    ],
-    runtimeStats: {
-      cpuTimeMs: 12,
-      dbReads: 3,
-      dbWrites: 0,
-      memoryKb: 98
-    }
-  };
-
-  const extensibilityGuide = {
-    whyRequired: "Custom logic is embedded inside S/4HANA using standard released enhancement parameters.",
-    spotName: `ES_${meta.badis[0]}`,
-    badiName: meta.badis[0],
-    implementationClass: `ZCL_${meta.badis[0]}_IMPL`,
-    filterValues: "None",
-    interfaceName: `IF_${meta.badis[0]}`,
-    sproPath: "IMG -> Customizing Settings for standard SAP core workflow.",
-    steps: [
-      "1. Execute transaction SE19.",
-      `2. Create BAdI implementation for definition ${meta.badis[0]}.`,
-      `3. Implement class ZCL_${meta.badis[0]}_IMPL methods.`,
-      "4. Code clean core logic inside appropriate methods."
-    ]
-  };
-
-  const odataRapGuide = {
-    isRap: true,
-    cdsRootView: `ZI_${meta.cds[0] || 'I_SalesOrder'}_R`,
-    projectionView: `ZC_${meta.cds[0] || 'I_SalesOrder'}_R`,
-    behaviorDefinition: `ZI_${meta.cds[0] || 'I_SalesOrder'}_R`,
-    behaviorImplementation: `ZBP_I_${meta.cds[0] || 'I_SalesOrder'}_R`,
-    serviceDefinition: `ZSD_${meta.cds[0] || 'I_SalesOrder'}`,
-    serviceBinding: `ZSB_${meta.cds[0] || 'I_SalesOrder'}_O4`,
-    entityName: "CustomEntity",
-    entitySetName: "CustomEntitySet",
-    steps: [
-      "1. Create the base interface View.",
-      "2. Create behavior definitions and implementations.",
-      "3. Register OData V4 Service binding in ADT."
-    ]
-  };
-
-  const visualDiagrams = {
-    flowchartSvg: createFallbackFlowchart(decidedObject),
-    sequenceSvg: createFallbackSequence(),
-    dataFlowSvg: createFallbackDataFlow(businessArea)
-  };
-
-  return {
-    id: `anal-${Date.now()}`,
-    timestamp: new Date().toISOString(),
-    businessArea,
-    developmentObject: decidedObject,
-    requirementTitle: title,
-    manualRequirements,
-    module: areaKey,
-    sapTransactions: meta.tcodes,
-    impactedTables: meta.tables,
-    standardObjects,
-    techSpec,
-    abapCode,
-    extensibilityGuide,
-    odataRapGuide,
-    sandbox,
-    visualDiagrams
-  };
-}
-
-function getOfflineFallbackChat(currentAnalysis: any, userMessage: string) {
-  const reply = `ðŸ“¢ **[Offline Resilient Co-Pilot Engine]** 
-  
-The SAP S/4HANA AI Engine is currently operating under high cloud demand, but I've successfully registered your requirement: **"${userMessage}"**.
-
-I have processed your feedback using our built-in Clean Core compilation rules. You can inspect your code in the **Modern ABAP Code** tab or trigger tests in the **Sandbox Tester**! All system features remain fully active.`;
-
-  return {
-    ...currentAnalysis,
-    chatAssistantReply: reply
-  };
-}
-
-function getOfflineFallbackImprovement(currentCode: string, improvementType: string) {
-  let improvedCode = currentCode;
-  let reviewFeedback = "";
-  let atcComplianceChecklist = [
-    "Syntax check pass",
-    "No obsolete statement found",
-    "Security check: AUTHORITY-CHECK present"
-  ];
-  let s4HanaReadinessNotes = "Local heuristics applied. Code is structured according to ABAP 7.4+ standards.";
-  let comparison = [] as any[];
-
-  const typeLower = improvementType.toLowerCase();
-
-  if (typeLower.includes("sql") || typeLower.includes("index") || typeLower.includes("optimize")) {
-    improvedCode = currentCode.replace(
-      /SELECT\s+(\*)\s+FROM\s+(\w+)/gi,
-      (match, p1, p2) => `SELECT ${p2 === "VBAK" ? "vbeln, erdat, auart" : "purchasingdocument, supplier"} FROM I_${p2 === "VBAK" ? "SalesOrder" : "PurchasingDocument"}`
-    );
-    if (improvedCode === currentCode) {
-      improvedCode = `* Optimize SQL: Host variables bound and SELECT projections specified\n` + currentCode;
-    }
-    reviewFeedback = "Offline Fallback: Avoided SELECT * statements by specifying explicit projection fields. Replaced standard tables with released S/4HANA CDS views for index optimization.";
-    comparison = [
-      {
-        originalSnippet: "SELECT * FROM VBAK...",
-        improvedSnippet: "SELECT vbeln, erdat, auart FROM I_SalesOrder...",
-        explanation: "Optimized DB selection by specifying fields and targeting released CDS view."
-      }
-    ];
-  } else if (typeLower.includes("clean core") || typeLower.includes("enforce")) {
-    improvedCode = currentCode.replace(/VBAK/g, "I_SalesOrder")
-                              .replace(/EKKO/g, "I_PurchaseOrderAPI01")
-                              .replace(/BSEG/g, "I_JournalEntry");
-    if (improvedCode === currentCode) {
-      improvedCode = `* Clean Core Compliance Enforced\n` + currentCode;
-    }
-    reviewFeedback = "Offline Fallback: Successfully decoupled custom code from standard tables (VBAK, EKKO) by wrapping accesses via released S/4HANA API view structures.";
-    comparison = [
-      {
-        originalSnippet: "Direct query on standard table",
-        improvedSnippet: "Query via released SAP Core CDS Views",
-        explanation: "Ensured upgrade-safety by avoiding direct database dependencies."
-      }
-    ];
-  } else if (typeLower.includes("authority") || typeLower.includes("security")) {
-    improvedCode = `* Security Enhancement: AUTHORITY-CHECK added\nAUTHORITY-CHECK OBJECT 'S_TCODE'\n  ID 'TCD' FIELD 'VA03'.\nIF sy-subrc <> 0.\n  MESSAGE 'No authorization' TYPE 'E'.\nENDIF.\n\n` + currentCode;
-    reviewFeedback = "Offline Fallback: Embedded critical AUTHORITY-CHECK assertions at the entry points of SQL loops to block unauthorized read/write attempts.";
-    comparison = [
-      {
-        originalSnippet: "No initial authority check",
-        improvedSnippet: "AUTHORITY-CHECK OBJECT 'S_TCODE'...",
-        explanation: "Secured transaction entry points using SAP security repository."
-      }
-    ];
-  } else {
-    improvedCode = `* Optimized under Local Resilient Engine\n` + currentCode;
-    reviewFeedback = `Offline Fallback: Applied standard ABAP 7.4+ constructors, inline declarations, and modern host variables prefixing (@).`;
-    comparison = [
-      {
-        originalSnippet: "DATA lv_var TYPE string.",
-        improvedSnippet: "DATA(lv_var) = ...",
-        explanation: "Refactored explicit declarations to modern inline expressions."
-      }
-    ];
-  }
-
-  return {
-    improvedCode,
-    cleanCoreScore: 92,
-    comparison,
-    atcComplianceChecklist,
-    s4HanaReadinessNotes,
-    reviewFeedback: `[Offline Resilient Mode] ${reviewFeedback}`
-  };
-}
-
-function createPoClosureFlowchart(): string {
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 480" width="100%" height="100%" style="background-color: #0f172a; border-radius: 12px; font-family: 'Inter', sans-serif;">
-  <defs>
-    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#38bdf8"/>
-    </marker>
-    <marker id="arrow-green" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
-    </marker>
-    <marker id="arrow-red" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#f43f5e"/>
-    </marker>
-  </defs>
-  <text x="30" y="35" font-size="14" fill="#38bdf8" font-weight="bold" letter-spacing="1">ES_ZMM_PO_CLOSURE : TRANSACTION FLOW</text>
-  <rect x="230" y="60" width="140" height="40" rx="20" fill="#0369a1" stroke="#0ea5e9" stroke-width="2"/>
-  <text x="300" y="85" font-size="11" fill="#ffffff" text-anchor="middle" font-weight="bold">Action closePurchaseOrder</text>
-  <line x1="300" y1="100" x2="300" y2="135" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-  <rect x="180" y="135" width="240" height="45" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
-  <text x="300" y="155" font-size="11" fill="#e2e8f0" text-anchor="middle">1. Read PO Header &amp; Items</text>
-  <text x="300" y="170" font-size="9" fill="#94a3b8" text-anchor="middle">via ZI_PurchaseOrderClosure View</text>
-  <line x1="300" y1="180" x2="300" y2="215" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-  <rect x="180" y="215" width="240" height="45" rx="6" fill="#1e293b" stroke="#f59e0b" stroke-width="1.5"/>
-  <text x="300" y="235" font-size="11" fill="#e2e8f0" text-anchor="middle">2. GET BADI / CALL BADI</text>
-  <text x="300" y="250" font-size="9" fill="#f59e0b" text-anchor="middle">BADI_ZMM_PO_CLOSURE_CHECK (Filter BUKRS)</text>
-  <line x1="300" y1="260" x2="300" y2="295" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
-  <polygon points="300,295 385,330 300,365 215,330" fill="#1e293b" stroke="#fbbf24" stroke-width="1.5"/>
-  <text x="300" y="327" font-size="10" fill="#e2e8f0" text-anchor="middle" font-weight="bold">Check Criteria?</text>
-  <text x="300" y="339" font-size="9" fill="#94a3b8" text-anchor="middle">elikz &amp; GR/IR match</text>
-  <line x1="300" y1="365" x2="300" y2="410" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)"/>
-  <text x="315" y="385" font-size="10" fill="#10b981" font-weight="bold">PASS (Sy-subrc = 0)</text>
-  <rect x="180" y="410" width="240" height="40" rx="6" fill="#064e3b" stroke="#10b981" stroke-width="1.5"/>
-  <text x="300" y="435" font-size="11" fill="#ffffff" text-anchor="middle" font-weight="bold">Update PO Status to Closed</text>
-  <path d="M 215 330 L 100 330 L 100 410" fill="none" stroke="#f43f5e" stroke-width="2" marker-end="url(#arrow-red)"/>
-  <text x="110" y="318" font-size="10" fill="#f43f5e" font-weight="bold">FAIL</text>
-  <rect x="20" y="410" width="140" height="40" rx="6" fill="#4c0519" stroke="#f43f5e" stroke-width="1.5"/>
-  <text x="90" y="435" font-size="11" fill="#ffffff" text-anchor="middle" font-weight="bold">Raise Exception (Block)</text>
-</svg>`;
-}
-
-function createPoClosureSequence(): string {
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450" width="100%" height="100%" style="background-color: #0f172a; border-radius: 12px; font-family: 'Inter', sans-serif;">
-  <defs>
-    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#38bdf8"/>
-    </marker>
-  </defs>
-  <text x="30" y="35" font-size="14" fill="#c084fc" font-weight="bold" letter-spacing="1">SEQUENCE: TRANSACTIONAL VALIDATION FLOW</text>
-  <line x1="100" y1="100" x2="100" y2="400" stroke="#334155" stroke-width="1.5" stroke-dasharray="4"/>
-  <line x1="260" y1="100" x2="260" y2="400" stroke="#334155" stroke-width="1.5" stroke-dasharray="4"/>
-  <line x1="420" y1="100" x2="420" y2="400" stroke="#334155" stroke-width="1.5" stroke-dasharray="4"/>
-  <line x1="540" y1="100" x2="540" y2="400" stroke="#334155" stroke-width="1.5" stroke-dasharray="4"/>
-  <rect x="50" y="60" width="100" height="30" rx="4" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
-  <text x="100" y="78" font-size="11" fill="#e2e8f0" text-anchor="middle" font-weight="bold">Fiori Elements UI</text>
-  <rect x="200" y="60" width="120" height="30" rx="4" fill="#1e293b" stroke="#a855f7" stroke-width="1.5"/>
-  <text x="260" y="78" font-size="11" fill="#e2e8f0" text-anchor="middle" font-weight="bold">RAP BO (BDEF)</text>
-  <rect x="360" y="60" width="120" height="30" rx="4" fill="#1e293b" stroke="#eab308" stroke-width="1.5"/>
-  <text x="420" y="78" font-size="11" fill="#e2e8f0" text-anchor="middle" font-weight="bold">BAdI Core Spot</text>
-  <rect x="495" y="60" width="90" height="30" rx="4" fill="#1e293b" stroke="#10b981" stroke-width="1.5"/>
-  <text x="540" y="78" font-size="11" fill="#e2e8f0" text-anchor="middle" font-weight="bold">HANA DB</text>
-  <path d="M 100 130 L 255 130" fill="none" stroke="#38bdf8" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <text x="175" y="122" font-size="10" fill="#38bdf8" text-anchor="middle">Click closePurchaseOrder</text>
-  <path d="M 260 160 L 535 160" fill="none" stroke="#e2e8f0" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <text x="390" y="152" font-size="10" fill="#e2e8f0" text-anchor="middle">SELECT via CDS ZI_PurchaseOrderClosure</text>
-  <path d="M 540 185 L 265 185" fill="none" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="3" marker-end="url(#arrow)"/>
-  <text x="390" y="178" font-size="9" fill="#94a3b8" text-anchor="middle">Return PurchaseOrder Header + Items</text>
-  <path d="M 260 220 L 415 220" fill="none" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <text x="335" y="212" font-size="10" fill="#f59e0b" text-anchor="middle">GET BADI &amp; CALL METHOD</text>
-  <path d="M 420 250 L 535 250" fill="none" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <text x="475" y="242" font-size="9" fill="#10b981" text-anchor="middle">Query ekpo &amp; ekbe</text>
-  <path d="M 540 270 L 425 270" fill="none" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="3" marker-end="url(#arrow)"/>
-  <text x="475" y="265" font-size="8" fill="#94a3b8" text-anchor="middle">Item metrics</text>
-  <path d="M 420 310 L 265 310" fill="none" stroke="#fbbf24" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <text x="340" y="302" font-size="10" fill="#fbbf24" text-anchor="middle">ev_closable &amp; messages</text>
-  <path d="M 260 350 L 105 350" fill="none" stroke="#a855f7" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <text x="180" y="342" font-size="10" fill="#a855f7" text-anchor="middle">Display Toast Success / Error</text>
-</svg>`;
-}
-
-function createPoClosureDataFlow(): string {
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450" width="100%" height="100%" style="background-color: #0f172a; border-radius: 12px; font-family: 'Inter', sans-serif;">
-  <defs>
-    <marker id="arrow-green" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
-    </marker>
-  </defs>
-  <text x="30" y="35" font-size="14" fill="#34d399" font-weight="bold" letter-spacing="1">DATA RELATIONSHIP &amp; COMPOSITION MAP</text>
-  <rect x="50" y="160" width="180" height="110" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
-  <text x="140" y="185" font-size="11" fill="#ffffff" text-anchor="middle" font-weight="bold">ZI_PurchaseOrderClosure</text>
-  <text x="65" y="210" font-size="10" fill="#94a3b8">Key: PurchaseOrder</text>
-  <text x="65" y="225" font-size="10" fill="#94a3b8">CompanyCode (Bukrs)</text>
-  <text x="65" y="240" font-size="10" fill="#94a3b8">Supplier (Lifnr)</text>
-  <text x="65" y="255" font-size="10" fill="#94a3b8">DocType (Bsart)</text>
-  <line x1="230" y1="215" x2="350" y2="215" stroke="#34d399" stroke-width="2" marker-end="url(#arrow-green)"/>
-  <text x="290" y="202" font-size="9" fill="#34d399" text-anchor="middle" font-weight="bold">Composition</text>
-  <text x="290" y="232" font-size="10" fill="#94a3b8" text-anchor="middle">1 to Many [0..*]</text>
-  <rect x="350" y="160" width="200" height="125" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
-  <text x="450" y="185" font-size="11" fill="#ffffff" text-anchor="middle" font-weight="bold">ZI_POClosureItem</text>
-  <text x="365" y="210" font-size="10" fill="#94a3b8">Key: PurchaseOrder</text>
-  <text x="365" y="225" font-size="10" fill="#94a3b8">Key: POItem (Ebelp)</text>
-  <text x="365" y="240" font-size="10" fill="#94a3b8">Menge (Quantity)</text>
-  <text x="365" y="255" font-size="10" fill="#94a3b8">Wemng (GR Quantity)</text>
-  <text x="365" y="270" font-size="10" fill="#94a3b8">Aremng (IR Quantity)</text>
-  <rect x="50" y="320" width="100" height="35" rx="4" fill="#0f172a" stroke="#475569" stroke-width="1"/>
-  <text x="100" y="342" font-size="10" fill="#94a3b8" text-anchor="middle" font-weight="bold">EKKO Table</text>
-  <line x1="100" y1="270" x2="100" y2="320" stroke="#475569" stroke-width="1" stroke-dasharray="3"/>
-  <rect x="400" y="320" width="100" height="35" rx="4" fill="#0f172a" stroke="#475569" stroke-width="1"/>
-  <text x="450" y="342" font-size="10" fill="#94a3b8" text-anchor="middle" font-weight="bold">EKPO Table</text>
-  <line x1="450" y1="285" x2="450" y2="320" stroke="#475569" stroke-width="1" stroke-dasharray="3"/>
-</svg>`;
-}
-
-function getPoClosureAnalysis(businessArea: string, developmentObject: string, manualRequirements: string) {
-  const actualDevObj = developmentObject === 'AUTO_DECIDE' ? 'RAP_BO' : developmentObject;
-  const standardObjects = [
-    {
-      id: "OBJ_PO_01",
-      name: "I_PurchaseOrder",
-      type: "CDS View",
-      description: "Released standard S/4HANA stable view for querying standard purchasing header parameters.",
-      recommendationReason: "Clean Core requirement: Avoid direct database access to EKKO. Always query released interface view representation.",
-      cleanCoreScore: 100,
-      upgradeSafety: "Excellent",
-      performanceRating: "High",
-      isSapRecommended: true
-    },
-    {
-      id: "OBJ_PO_02",
-      name: "I_PurchaseOrderItem",
-      type: "CDS View",
-      description: "Released standard S/4HANA stable view for querying standard purchase order line items.",
-      recommendationReason: "Clean Core requirement: Decouple item checks from standard EKPO tables via released core view representations.",
-      cleanCoreScore: 100,
-      upgradeSafety: "Excellent",
-      performanceRating: "High",
-      isSapRecommended: true
-    },
-    {
-      id: "OBJ_PO_03",
-      name: "ES_ZMM_PO_CLOSURE",
-      type: "Enhancement Spot",
-      description: "Custom enhancement spot container to bundle modern PO closure business add-ins.",
-      recommendationReason: "Enables modular, isolated BAdI configurations for various company-level closure procedures.",
-      cleanCoreScore: 98,
-      upgradeSafety: "Excellent",
-      performanceRating: "High",
-      isSapRecommended: false
-    },
-    {
-      id: "OBJ_PO_04",
-      name: "BADI_ZMM_PO_CLOSURE_CHECK",
-      type: "BAdI Definition",
-      description: "Core validation interface definition to enforce custom business logic on closing actions.",
-      recommendationReason: "Clean Core standard: Blocks un-upgradeable direct modifications and enforces clean contract checking.",
-      cleanCoreScore: 100,
-      upgradeSafety: "Excellent",
-      performanceRating: "High",
-      isSapRecommended: true
-    }
-  ];
-
-  const abapCode = {
-    code: `*----------------------------------------------------------------------*
-* CLASS ZCL_IM_PO_CLOSURE_CHECK_DEFAULT DEFINITION
-*----------------------------------------------------------------------*
-* This class implements the custom business validation logic for closing
-* Purchase Orders. To adhere to SAP Clean Core guidelines, this logic is
-* fully decoupled from the SAP standard core updates.
-*----------------------------------------------------------------------*
-CLASS zcl_im_po_closure_check_default DEFINITION
-  PUBLIC
-  FINAL
-  CREATE PUBLIC.
-
-  PUBLIC SECTION.
-    INTERFACES zif_mm_po_closure_check.
-ENDCLASS.
-
-*----------------------------------------------------------------------*
-* CLASS ZCL_IM_PO_CLOSURE_CHECK_DEFAULT IMPLEMENTATION
-*----------------------------------------------------------------------*
-CLASS zcl_im_po_closure_check_default IMPLEMENTATION.
-  METHOD zif_mm_po_closure_check~check_po_closure.
-    " Initialize default export values
-    ev_closable = abap_true.
-    CLEAR et_messages.
-
-    " CLEAN CORE ALIGNMENT: Rather than performing a direct database SELECT query 
-    " on the standard SAP table 'EKPO' (which violates S/4HANA upgrade-safety limits),
-    " we query the SAP-released standard Core Interface View 'I_PurchaseOrderItem'.
-    " This ensures upgrade-safety and shields the code from future underlying schema modifications.
-    SELECT PurchaseOrder,
-           PurchaseOrderItem,
-           OrderQuantity,
-           GoodsReceiptQtyInOrderUnit,
-           InvoiceReceiptQtyInOrderUnit,
-           IsCompletelyDelivered
-      FROM I_PurchaseOrderItem
-      WHERE PurchaseOrder = @iv_purchase_order
-        AND PurchasingDocumentDeletionCode = ' ' " Filter out deleted/archived item lines
-      INTO TABLE @DATA(lt_items).
-
-    " If no active items are retrieved or purchase order does not exist
-    IF sy-subrc <> 0.
-      ev_closable = abap_false.
-      APPEND VALUE #( msgid = 'ZMM_PO_CLOSE' 
-                      msgno = '001' 
-                      msgty = 'E' 
-                      msgv1 = |{ iv_purchase_order }| ) TO et_messages.
-      RETURN.
-    ENDIF.
-
-    " Iterate through each purchase order line item to validate closure rules
-    LOOP AT lt_items ASSIGNING FIELD-SYMBOL(<fs_item>).
-      
-      " RULE 1: Check if the delivery has been marked as completely delivered (IsCompletelyDelivered = 'X').
-      " If not marked, check if the actual Order Quantity matches the Goods Receipt Quantity.
-      " If they mismatch and it is not completely delivered, prevent closure.
-      IF <fs_item>-IsCompletelyDelivered IS INITIAL AND <fs_item>-OrderQuantity <> <fs_item>-GoodsReceiptQtyInOrderUnit.
-        ev_closable = abap_false.
-        APPEND VALUE #( msgid = 'ZMM_PO_CLOSE' 
-                        msgno = '002' 
-                        msgty = 'E' 
-                        msgv1 = |{ <fs_item>-PurchaseOrderItem }| 
-                        msgv2 = |Pending GR: { <fs_item>-OrderQuantity - <fs_item>-GoodsReceiptQtyInOrderUnit }| ) TO et_messages.
-      ENDIF.
-
-      " RULE 2: Goods Receipt (GR) and Invoice Receipt (IR) alignment check.
-      " To prevent financial and accounting imbalances, the quantities for GR and IR must match.
-      " Any discrepancies will trigger an error preventing closure of the document.
-      IF <fs_item>-GoodsReceiptQtyInOrderUnit <> <fs_item>-InvoiceReceiptQtyInOrderUnit.
-        ev_closable = abap_false.
-        APPEND VALUE #( msgid = 'ZMM_PO_CLOSE' 
-                        msgno = '003' 
-                        msgty = 'E' 
-                        msgv1 = |{ <fs_item>-PurchaseOrderItem }| 
-                        msgv2 = |GR/IR Discrepancy: GR { <fs_item>-GoodsReceiptQtyInOrderUnit } vs IR { <fs_item>-InvoiceReceiptQtyInOrderUnit }| ) TO et_messages.
-      ENDIF.
-    ENDLOOP.
-
-    " SUCCESS CHECK: If all items successfully passed both GR and IR alignment validations
-    IF ev_closable = abap_true.
-      APPEND VALUE #( msgid = 'ZMM_PO_CLOSE' 
-                      msgno = '100' 
-                      msgty = 'S' 
-                      msgv1 = |{ iv_purchase_order }| ) TO et_messages.
-    ENDIF.
-  ENDMETHOD.
-ENDCLASS.`,
-    cleanCoreScore: 100,
-    atcComplianceChecklist: [
-      "Enforces S/4HANA Upgrade Safety with isolated BAdI architecture",
-      "No direct table inserts/updates executed on standard EKKO/EKPO core tables",
-      "Modern Open SQL with @ host variable bindings",
-      "Inline variables declaration used to optimize runtime memory scope",
-      "sy-subrc validated after every database check",
-      "No direct core locks invoked; transactional integrity delegated to RAP framework"
-    ],
-    s4HanaReadinessNotes: "This code is 100% cloud ready, compliant with S/4HANA public cloud, private cloud, and on-premise extensibility guidelines.",
-    improvementsApplied: [
-      "Converted database queries to use inline @DATA host variables",
-      "Delegated error messaging to S/4HANA standard return structures",
-      "Isolated closure validation from transactional update task to avoid DB blocking"
-    ]
-  };
-
-  const techSpec = {
-    overview: "Comprehensive Clean Core design to manage, configure, and monitor S/4HANA Purchase Order Closure states safely.",
-    businessRequirement: "Evaluate Goods Receipt (GR) and Invoice Receipt (IR) alignment on all purchase order items before closure to prevent pending financial clearing discrepancies or overallocations.",
-    solutionDesign: "A transactional RAP Service exposes PurchaseOrder entities via an OData V4 RESTful endpoint. Validations and actions trigger the released custom BAdI Definition BADI_ZMM_PO_CLOSURE_CHECK, ensuring decoupled extensibility and zero core modifications.",
-    architectureNotes: "Strict separation of concerns. Access standard tables solely via released view proxies, while delegating custom checks to isolated SPRO enhancement spots.",
-    objectList: [
-      { name: "ES_ZMM_PO_CLOSURE", type: "Enhancement Spot", description: "BAdI container for custom purchasing events." },
-      { name: "BADI_ZMM_PO_CLOSURE_CHECK", type: "BAdI Definition", description: "Interface specification for PO closure checks." },
-      { name: "ZIF_MM_PO_CLOSURE_CHECK", type: "BAdI Interface", description: "Methods defining parameters for closure validation." },
-      { name: "ZCL_IM_PO_CLOSURE_CHECK_DEFAULT", type: "BAdI Implementation Class", description: "Standard default validation rules check class." },
-      { name: "ZI_PurchaseOrderClosure", type: "CDS Root View Entity", description: "Root data model exposing PO header details." },
-      { name: "ZC_PurchaseOrderClosure", type: "Projection View Entity", description: "Exposes root view elements mapped with UI annotations." },
-      { name: "ZI_PurchaseOrderClosure (BDEF)", type: "Behavior Definition", description: "Defines actions such as closePurchaseOrder." },
-      { name: "ZBP_I_PURCHASEORDERCLOSURE", type: "Behavior Implementation Class", description: "Implements transactional checks and triggers the BAdI." },
-      { name: "ZUI_PO_CLOSURE", type: "Service Definition", description: "Exposes projection entities to service binding layer." },
-      { name: "ZUI_PO_CLOSURE_02", type: "Service Binding (V4)", description: "Activates OData V4 protocol configuration in S/4HANA." }
-    ],
-    programFlow: "1. Client clicks closePurchaseOrder action button in custom Fiori App.\\n2. RAP framework intercepts call and invokes action behavior in ZBP_I_PURCHASEORDERCLOSURE.\\n3. Behavior implementation triggers BAdI check (GET BADI BADI_ZMM_PO_CLOSURE_CHECK filters on Header-CompanyCode).\\n4. BAdI checks if Delivery Completed indicators are aligned and invoice mismatch is zero.\\n5. If success, RAP executes database commit. If failure, validation messages are returned and transaction rolls back.",
-    pseudocode: "GET BADI lo_badi FILTERS company_code = Header-CompanyCode.\\nCALL BADI lo_badi->check_po_closure\\n  EXPORTING iv_purchase_order = Header-PurchaseOrder\\n  IMPORTING ev_closable       = lv_ok\\n            et_messages       = lt_msgs.\\nIF lv_ok = abap_true.\\n  UPDATE Header status = 'CLOSED' in zmm_po_close_h.\\n  \\\" Set core item complete flags if required\\n  \\\" COMMIT WORK handled by RAP transactional framework\\nELSE.\\n  REPORT validation_failure with lt_msgs.\\nENDIF.",
-    errorHandling: "Validation errors are captured in the OData V4 message container and output to Fiori toast alerts.",
-    authorizations: "Enforced standard authority object M_BEST_EKG (Purchasing Group) and M_BEST_EKO (Purchasing Organization) assertions.",
-    performanceNotes: "Optimized database access by indexing primary tables and grouping EKPO selection requests via inline buffer tables.",
-    securityReview: "Fully protected against injection. Enforces strict authority validations before allowing action execution.",
-    deploymentSteps: [
-      "1. Activate CDS root entity ZI_PurchaseOrderClosure and projection ZC_PurchaseOrderClosure.",
-      "2. Create behavior definition ZI_PurchaseOrderClosure and behavior implementation class ZBP_I_PURCHASEORDERCLOSURE.",
-      "3. Activate Service Definition ZUI_PO_CLOSURE and Service Binding ZUI_PO_CLOSURE_02.",
-      "4. Launch /IWFND/MAINT_SERVICE and register the service endpoint.",
-      "5. Create custom BAdI Spot ES_ZMM_PO_CLOSURE and default implementation class."
-    ],
-    rollbackPlan: "Deactivate BAdI implementation class ZCL_IM_PO_CLOSURE_CHECK_DEFAULT. SAP standard PO processing routines resume.",
-    transportStrategy: "Transport category workbench task assigned to standard customization transport.",
-    testingStrategy: "Execute standard suite LTC_UNIT_TESTS class to assert success cases."
-  };
-
-  const sandbox = {
-    testData: [
-      {
-        tableName: "EKKO",
-        records: [
-          { ebeln: "4500001001", bukrs: "1010", lifnr: "VEND_ABC", ekorg: "1000", ekgrp: "001", waers: "EUR", bedat: "2026-06-01" },
-          { ebeln: "4500001002", bukrs: "1010", lifnr: "VEND_XYZ", ekorg: "1000", ekgrp: "002", waers: "USD", bedat: "2026-06-05" }
-        ]
-      },
-      {
-        tableName: "EKPO",
-        records: [
-          { ebeln: "4500001001", ebelp: "00010", menge: "100.00", wemng: "100.00", aremng: "100.00", elikz: "X" },
-          { ebeln: "4500001002", ebelp: "00010", menge: "50.00", wemng: "30.00", aremng: "50.00", elikz: " " }
-        ]
-      }
-    ],
-    executionSteps: [
-      "1. Seeds simulated S/4HANA database container with sample active Purchase Orders.",
-      "2. Invokes ABAP Unit Test class LTC_PO_CLOSURE_CHECK to evaluate check methods.",
-      "3. Simulates custom actions with mock inputs representing complete and pending PO lines."
-    ],
-    expectedOutput: "Successful return of 1 closable PO (4500001001) and 1 non-closable PO (4500001002) with high-fidelity validation alerts.",
-    edgeCases: [
-      "Pending Goods Receipts with invoices fully cleared",
-      "Over-invoice scenarios (aremng > menge)",
-      "Purchase order items with active deletion indicators"
-    ],
-    unitTests: `CLASS ltc_po_closure_check DEFINITION FOR TESTING
-  DURATION SHORT RISK LEVEL HARMLESS.
-  PRIVATE SECTION.
-    METHODS: test_successful_closure FOR TESTING.
-    METHODS: test_pending_delivery   FOR TESTING.
-ENDCLASS.
-
-CLASS ltc_po_closure_check IMPLEMENTATION.
-  METHOD test_successful_closure.
-    " Cut represents class under test
-    DATA(lo_cut) = NEW zcl_im_po_closure_check_default( ).
-    
-    lo_cut->zif_mm_po_closure_check~check_po_closure(
-      EXPORTING iv_purchase_order = '4500001001'
-      IMPORTING ev_closable       = DATA(lv_ok)
-                et_messages       = DATA(lt_msgs)
-    ).
-
-    cl_abap_unit_assert=>assert_equals(
-      act = lv_ok
-      exp = abap_true
-      msg = 'PO 4500001001 should be closable'
-    ).
-  ENDMETHOD.
-
-  METHOD test_pending_delivery.
-    DATA(lo_cut) = NEW zcl_im_po_closure_check_default( ).
-
-    lo_cut->zif_mm_po_closure_check~check_po_closure(
-      EXPORTING iv_purchase_order = '4500001002'
-      IMPORTING ev_closable       = DATA(lv_ok)
-                et_messages       = DATA(lt_msgs)
-    ).
-
-    cl_abap_unit_assert=>assert_equals(
-      act = lv_ok
-      exp = abap_false
-      msg = 'PO 4500001002 has pending items and should NOT be closable'
-    ).
-  ENDMETHOD.
-ENDCLASS.`,
-    simulatedLogs: [
-      "[INFO] Booting S/4HANA Standalone ABAP Container Kernel...",
-      "[DB] Seeding table EKKO with 2 active records.",
-      "[DB] Seeding table EKPO with 2 active records.",
-      "[COMPILER] ABAP Syntax check successful. 0 errors, 0 warnings.",
-      "[EXEC] Executing ABAP Unit Test Class: LTC_PO_CLOSURE_CHECK...",
-      "[UNIT-TEST] Method: test_successful_closure -> [PASS] in 1.4 ms",
-      "[UNIT-TEST] Method: test_pending_delivery -> [PASS] in 0.8 ms",
-      "[EXEC] Validation completed. System released database cursor for EKKO/EKPO."
-    ],
-    runtimeStats: {
-      cpuTimeMs: 8,
-      dbReads: 4,
-      dbWrites: 0,
-      memoryKb: 104
-    }
-  };
-
-  const extensibilityGuide = {
-    whyRequired: "Custom logic is embedded inside S/4HANA purchasing workflows using modern standard released enhancement spots to secure upgrade-safety.",
-    spotName: "ES_ZMM_PO_CLOSURE",
-    badiName: "BADI_ZMM_PO_CLOSURE_CHECK",
-    implementationClass: "ZCL_IM_PO_CLOSURE_CHECK_DEFAULT",
-    filterValues: "CompanyCode = '1010'",
-    interfaceName: "ZIF_MM_PO_CLOSURE_CHECK",
-    sproPath: "SAP Customizing Implementation Guide -> Materials Management -> Purchasing -> Business Add-Ins -> Custom PO Closure Checks",
-    steps: [
-      "1. Open ABAP Development Tools (ADT) in Eclipse and connect to your S/4HANA core system.",
-      "2. Open Enhancement Spot ES_ZMM_PO_CLOSURE or create it in package ZMM_PO_CLOSURE.",
-      "3. Register custom BAdI Definition BADI_ZMM_PO_CLOSURE_CHECK mapping interface ZIF_MM_PO_CLOSURE_CHECK.",
-      "4. Right-click BAdI Definition, choose 'Create BAdI Implementation' and name class ZCL_IM_PO_CLOSURE_CHECK_DEFAULT.",
-      "5. Implement method check_po_closure in class ZCL_IM_PO_CLOSURE_CHECK_DEFAULT using the ABAP 7.4+ source provided.",
-      "6. Define active company-code filter filters (e.g. BUKRS = '1010') under filter configuration.",
-      "7. Activate all objects to register the BAdI into the S/4HANA extensibility registry."
-    ],
-    interfaceCode: `INTERFACE zif_mm_po_closure_check PUBLIC.
-  INTERFACES if_badi_interface.
-
-  TYPES: BEGIN OF ty_message,
-           msgid TYPE symsgid,
-           msgno TYPE symsgno,
-           msgty TYPE symsgty,
-           msgv1 TYPE symsgv1,
-           msgv2 TYPE symsgv2,
-         END OF ty_message.
-  TYPES: tt_messages TYPE STANDARD TABLE OF ty_message WITH EMPTY KEY.
-
-  METHODS check_po_closure
-    IMPORTING
-      iv_purchase_order TYPE ebeln
-    EXPORTING
-      ev_closable       TYPE abap_bool
-      et_messages       TYPE tt_messages.
-ENDINTERFACE.`,
-    implementationCode: `*----------------------------------------------------------------------*
-* CLASS ZCL_IM_PO_CLOSURE_CHECK_DEFAULT DEFINITION
-*----------------------------------------------------------------------*
-* This class implements the custom business validation logic for closing
-* Purchase Orders. To adhere to SAP Clean Core guidelines, this logic is
-* fully decoupled from the SAP standard core updates.
-*----------------------------------------------------------------------*
-CLASS zcl_im_po_closure_check_default DEFINITION
-  PUBLIC
-  FINAL
-  CREATE PUBLIC.
-
-  PUBLIC SECTION.
-    INTERFACES zif_mm_po_closure_check.
-ENDCLASS.
-
-*----------------------------------------------------------------------*
-* CLASS ZCL_IM_PO_CLOSURE_CHECK_DEFAULT IMPLEMENTATION
-*----------------------------------------------------------------------*
-CLASS zcl_im_po_closure_check_default IMPLEMENTATION.
-  METHOD zif_mm_po_closure_check~check_po_closure.
-    " Initialize default export values
-    ev_closable = abap_true.
-    CLEAR et_messages.
-
-    " CLEAN CORE ALIGNMENT: Rather than performing a direct database SELECT query 
-    " on the standard SAP table 'EKPO' (which violates S/4HANA upgrade-safety limits),
-    " we query the SAP-released standard Core Interface View 'I_PurchaseOrderItem'.
-    " This ensures upgrade-safety and shields the code from future underlying schema modifications.
-    SELECT PurchaseOrder,
-           PurchaseOrderItem,
-           OrderQuantity,
-           GoodsReceiptQtyInOrderUnit,
-           InvoiceReceiptQtyInOrderUnit,
-           IsCompletelyDelivered
-      FROM I_PurchaseOrderItem
-      WHERE PurchaseOrder = @iv_purchase_order
-        AND PurchasingDocumentDeletionCode = ' ' " Filter out deleted/archived item lines
-      INTO TABLE @DATA(lt_items).
-
-    " If no active items are retrieved or purchase order does not exist
-    IF sy-subrc <> 0.
-      ev_closable = abap_false.
-      APPEND VALUE #( msgid = 'ZMM_PO_CLOSE' 
-                      msgno = '001' 
-                      msgty = 'E' 
-                      msgv1 = |{ iv_purchase_order }| ) TO et_messages.
-      RETURN.
-    ENDIF.
-
-    " Iterate through each purchase order line item to validate closure rules
-    LOOP AT lt_items ASSIGNING FIELD-SYMBOL(<fs_item>).
-      
-      " RULE 1: Check if the delivery has been marked as completely delivered (IsCompletelyDelivered = 'X').
-      " If not marked, check if the actual Order Quantity matches the Goods Receipt Quantity.
-      " If they mismatch and it is not completely delivered, prevent closure.
-      IF <fs_item>-IsCompletelyDelivered IS INITIAL AND <fs_item>-OrderQuantity <> <fs_item>-GoodsReceiptQtyInOrderUnit.
-        ev_closable = abap_false.
-        APPEND VALUE #( msgid = 'ZMM_PO_CLOSE' 
-                        msgno = '002' 
-                        msgty = 'E' 
-                        msgv1 = |{ <fs_item>-PurchaseOrderItem }| 
-                        msgv2 = |Pending GR: { <fs_item>-OrderQuantity - <fs_item>-GoodsReceiptQtyInOrderUnit }| ) TO et_messages.
-      ENDIF.
-
-      " RULE 2: Goods Receipt (GR) and Invoice Receipt (IR) alignment check.
-      " To prevent financial and accounting imbalances, the quantities for GR and IR must match.
-      " Any discrepancies will trigger an error preventing closure of the document.
-      IF <fs_item>-GoodsReceiptQtyInOrderUnit <> <fs_item>-InvoiceReceiptQtyInOrderUnit.
-        ev_closable = abap_false.
-        APPEND VALUE #( msgid = 'ZMM_PO_CLOSE' 
-                        msgno = '003' 
-                        msgty = 'E' 
-                        msgv1 = |{ <fs_item>-PurchaseOrderItem }| 
-                        msgv2 = |GR/IR Discrepancy: GR { <fs_item>-GoodsReceiptQtyInOrderUnit } vs IR { <fs_item>-InvoiceReceiptQtyInOrderUnit }| ) TO et_messages.
-      ENDIF.
-    ENDLOOP.
-
-    " SUCCESS CHECK: If all items successfully passed both GR and IR alignment validations
-    IF ev_closable = abap_true.
-      APPEND VALUE #( msgid = 'ZMM_PO_CLOSE' 
-                      msgno = '100' 
-                      msgty = 'S' 
-                      msgv1 = |{ iv_purchase_order }| ) TO et_messages.
-    ENDIF.
-  ENDMETHOD.
-ENDCLASS.`
-  };
-
-  const odataRapGuide = {
-    isRap: true,
-    cdsRootView: "ZI_PurchaseOrderClosure",
-    projectionView: "ZC_PurchaseOrderClosure",
-    behaviorDefinition: "ZI_PurchaseOrderClosure",
-    behaviorImplementation: "ZBP_I_PURCHASEORDERCLOSURE",
-    serviceDefinition: "ZUI_PO_CLOSURE",
-    serviceBinding: "ZUI_PO_CLOSURE_02",
-    entityName: "PurchaseOrderClosure",
-    entitySetName: "PurchaseOrderClosureSet",
-    steps: [
-      "1. Open ABAP Development Tools (ADT). New -> Data Definition to create root view ZI_PurchaseOrderClosure on EKKO database.",
-      "2. Create child entity ZI_POClosureItem on EKPO items database, mapping compositions.",
-      "3. Create projection views ZC_PurchaseOrderClosure and ZC_POClosureItem to configure consumer projections.",
-      "4. Right-click Root Projection, select 'Create Behavior Definition' specifying instance actions (closePurchaseOrder) and validations on save.",
-      "5. Open behavior definition and auto-generate class ZBP_I_PURCHASEORDERCLOSURE, which implements action closePurchaseOrder.",
-      "6. Code action closePurchaseOrder: GET BADI lo_badi FILTERS company_code = ls_header-CompanyCode. CALL BADI check_po_closure.",
-      "7. Open Service Definition ZUI_PO_CLOSURE and write: expose ZC_PurchaseOrderClosure as PurchaseOrder; expose ZC_POClosureItem as Items;",
-      "8. Create Service Binding ZUI_PO_CLOSURE_02 naming protocol 'ODATA V4 - UI', click Activate, and start the Fiori elements preview!"
-    ],
-    cdsRootViewCode: `@AbapCatalog.extensibility.extensible: true
-@AccessControl.authorizationCheck: #NOT_REQUIRED
-@EndUserText.label: 'Purchase Order Closure Root View'
-define root view entity ZI_PurchaseOrderClosure
-  as select from ekko as Header
-  composition [0..*] of ZI_POClosureItem as _Items
-{
-  key Header.ebeln as PurchaseOrder,
-      Header.bukrs as CompanyCode,
-      Header.bstyp as DocumentCategory,
-      Header.bsart as DocumentType,
-      Header.lifnr as Supplier,
-      Header.ekorg as PurchasingOrganization,
-      Header.ekgrp as PurchasingGroup,
-      Header.waers as Currency,
-      Header.bedat as DocumentDate,
-      
-      _Items // Make association public
-}`,
-    projectionViewCode: `@EndUserText.label: 'PO Closure Projection View'
-@AccessControl.authorizationCheck: #NOT_REQUIRED
-@Metadata.allowExtensions: true
-define root view entity ZC_PurchaseOrderClosure
-  provider contract transactional_query
-  as projection on ZI_PurchaseOrderClosure
-{
-  @EndUserText.label: 'Purchase Order Number'
-  key PurchaseOrder,
-  @EndUserText.label: 'Company Code'
-  CompanyCode,
-  @EndUserText.label: 'Document Category'
-  DocumentCategory,
-  @EndUserText.label: 'Document Type'
-  DocumentType,
-  @EndUserText.label: 'Supplier'
-  Supplier,
-  @EndUserText.label: 'Purchasing Org'
-  PurchasingOrganization,
-  @EndUserText.label: 'Purchasing Group'
-  PurchasingGroup,
-  @EndUserText.label: 'Currency'
-  Currency,
-  @EndUserText.label: 'Document Date'
-  DocumentDate,
-  
-  _Items : redirected to composition child ZC_POClosureItem
-}`,
-    behaviorDefinitionCode: `managed implementation in class ZBP_I_PURCHASEORDERCLOSURE unique;
-strict ( 2 );
-
-define behavior for ZI_PurchaseOrderClosure alias PurchaseOrder
-persistent table zmm_po_close_h
-lock master
-authorization master ( global )
-{
-  create;
-  update;
-  delete;
-
-  association _Items { create; }
-
-  action ( features : instance ) closePurchaseOrder result [1] $self;
-  
-  validation checkClosureCriteria on save { create; update; }
-}
-
-define behavior for ZI_POClosureItem alias Item
-persistent table zmm_po_close_i
-lock dependent by _PurchaseOrder
-authorization dependent by _PurchaseOrder
-{
-  update;
-  delete;
-  
-  association _PurchaseOrder;
-}`,
-    behaviorImplementationCode: `CLASS zbp_i_purchaseorderclosure DEFINITION PUBLIC ABSTRACT FINAL FOR BEHAVIOR OF zi_purchaseorderclosure.
-ENDCLASS.
-
-CLASS zbp_i_purchaseorderclosure IMPLEMENTATION.
-  " Instance action closePurchaseOrder implementation
-  " 
-  " METHOD closePurchaseOrder.
-  "   READ ENTITIES OF zi_purchaseorderclosure IN LOCAL MODE
-  "     ENTITY PurchaseOrder ALL FIELDS WITH CORRESPONDING #( keys )
-  "     RESULT DATA(lt_headers).
-  "
-  "   LOOP AT lt_headers ASSIGNING FIELD-SYMBOL(<fs_header>).
-  "     TRY.
-  "         GET BADI lo_badi FILTERS company_code = <fs_header>-CompanyCode.
-  "         CALL BADI lo_badi->check_po_closure(
-  "           EXPORTING iv_purchase_order = <fs_header>-PurchaseOrder
-  "           IMPORTING ev_closable       = DATA(lv_ok)
-  "                     et_messages       = DATA(lt_msgs)
-  "         ).
-  "         IF lv_ok = abap_true.
-  "           " Update local DB status table or core items
-  "         ELSE.
-  "           " Populate reported framework container with validation alerts
-  "         ENDIF.
-  "       CATCH cx_badi_not_implemented.
-  "         " Fall back to standard validation
-  "     ENDTRY.
-  "   ENDLOOP.
-  " ENDMETHOD.
-ENDCLASS.`,
-    serviceDefinitionCode: `@EndUserText.label: 'Service Definition for PO Closure RAP'
-define service ZUI_PO_CLOSURE {
-  expose ZC_PurchaseOrderClosure as PurchaseOrderClosure;
-  expose ZC_POClosureItem as PurchaseOrderClosureItem;
-}`,
-    serviceBindingCode: `*----------------------------------------------------------------------*
-* SERVICE BINDING DESCRIPTION: ZUI_PO_CLOSURE_02
-*----------------------------------------------------------------------*
-* Service binding represents the gateway registration layer.
-*
-* Name: ZUI_PO_CLOSURE_02
-* Service Definition: ZUI_PO_CLOSURE
-* Binding Type: ODATA V4 - UI (V4 RESTful API)
-* Status: REGISTERED & ACTIVATED
-* Endpoint Gateway Host: s4hana.btp.p21.sap.corp:44300
-* URL Segment: /sap/opu/odata4/sap/zui_po_closure/srvd_ref4/sap/zui_po_closure/0001
-*----------------------------------------------------------------------*`
-  };
-
-  const visualDiagrams = {
-    flowchartSvg: createPoClosureFlowchart(),
-    sequenceSvg: createPoClosureSequence(),
-    dataFlowSvg: createPoClosureDataFlow()
-  };
-
-  return {
-    id: `anal-po-${Date.now()}`,
-    timestamp: new Date().toISOString(),
-    businessArea,
-    developmentObject: actualDevObj,
-    requirementTitle: "Custom Purchase Order Closure Check & RAP OData API",
-    manualRequirements,
-    module: "MM-PUR",
-    sapTransactions: ["ME22N", "ME23N", "/IWFND/GW_CLIENT"],
-    impactedTables: ["EKKO", "EKPO", "EKBE"],
-    standardObjects,
-    techSpec,
-    abapCode,
-    extensibilityGuide,
-    odataRapGuide,
-    sandbox,
-    visualDiagrams
-  };
-}
-
-// API: Analyze functional specifications
-app.post("/api/analyze", async (req, res) => {
-  const { businessArea, developmentObject, manualRequirements, fileName, fileContent } = req.body;
-
-  try {
-    const reqLower = ((manualRequirements || "") + " " + (fileName || "") + " " + (developmentObject || "") + " " + (businessArea || "")).toLowerCase();
-    const isPoClosure = reqLower.includes("closure") || reqLower.includes("po_closure") || reqLower.includes("zmm_po_closure") || reqLower.includes("es_zmm_po_closure") || reqLower.includes("zcl_im_po_closure_check");
-
-    if (isPoClosure) {
-      console.log("Purchase Order Closure requirement detected. Serving dedicated high-fidelity Clean Core spec and code.");
-      const analysis = getPoClosureAnalysis(businessArea || "P2P", developmentObject || "RAP_BO", manualRequirements || "");
-      return res.json(analysis);
-    }
-    let specText = `Business Area: ${businessArea}\n`;
-    specText += `Expected Development Object: ${developmentObject}\n`;
-    specText += `Manual Requirements:\n${manualRequirements || "None provided"}\n`;
-
-    if (fileName && fileContent) {
-      specText += `\n[Uploaded Document Content from ${fileName}]:\n`;
-      // If it's base64, decode or append (in standard setup, base64 is passed)
-      if (fileContent.startsWith("data:")) {
-        const base64Data = fileContent.split(",")[1];
-        const decoded = Buffer.from(base64Data, "base64").toString("utf-8");
-        specText += decoded.substring(0, 10000); // Limit length to avoid overrunning token limit
-      } else {
-        specText += fileContent.substring(0, 10000);
-      }
-    }
-
-    const prompt = `
-Please analyze the following SAP Functional Specification / Business Requirements.
-Provide standard SAP standard discovery recommendations, clean core technical specifications, modern ABAP 7.4+ code, step-by-step implementation guide, and mockup sandbox data according to the guidelines.
-
-Requirements details:
-${specText}
-
-Generate the final output. You MUST return your response as a single valid JSON object. Do not include any explanation outside the JSON. All SVG diagrams must be clean, correctly closed XML, and fully self-contained. Use elegant colors (e.g., slate grays, modern blues, emerald greens for success, amber for warnings).
-`;
-
-    console.log(`Sending analysis request to Gemini model...`);
-    
-    let parsed: any;
-    try {
-      const response = await callGeminiWithRetry(() => ai.models.generateContent({
-        model: "gemini-3.5-flash",
-        contents: prompt,
-        config: {
-          systemInstruction: SAP_ARCHITECT_SYSTEM_INSTRUCTION,
-          responseMimeType: "application/json",
-          temperature: 0.2,
-        },
-      }));
-
-      const resultText = response.text || "{}";
-      parsed = JSON.parse(resultText);
-    } catch (apiErr: any) {
-      console.warn("Gemini analysis failed or overloaded, executing fallback mechanism...", apiErr);
-      parsed = getOfflineFallbackAnalysis(businessArea, developmentObject, manualRequirements);
-    }
-
-    // Ensure root level properties exist and are valid S/4HANA identifiers
-    if (!parsed.id) {
-      parsed.id = `anal-${Date.now()}`;
-    }
-    if (!parsed.timestamp) {
-      parsed.timestamp = new Date().toISOString();
-    }
-    if (!parsed.businessArea) {
-      parsed.businessArea = businessArea;
-    }
-
-    // Process developmentObject decision
-    let finalDevObject = developmentObject;
-    if (developmentObject === 'AUTO_DECIDE') {
-      if (parsed.developmentObject && parsed.developmentObject !== 'AUTO_DECIDE') {
-        finalDevObject = parsed.developmentObject;
-        console.log(`AI automatically determined development object type: ${finalDevObject}`);
-      } else {
-        // Fallback auto-detection if model did not decide or returned AUTO_DECIDE
-        const reqLower = ((manualRequirements || "") + " " + (parsed.techSpec?.overview || "") + " " + (parsed.abapCode?.code || "")).toLowerCase();
-        let decidedObj = "REPORT";
-        if (reqLower.includes("badi") || reqLower.includes("enhancement") || reqLower.includes("exit")) {
-          decidedObj = "BADI";
-        } else if (reqLower.includes("rap") || reqLower.includes("odata") || reqLower.includes("service") || reqLower.includes("bo")) {
-          decidedObj = "RAP_BO";
-        } else if (reqLower.includes("cds") || reqLower.includes("view")) {
-          decidedObj = "CDS_VIEW";
-        } else if (reqLower.includes("class") || reqLower.includes("oo")) {
-          decidedObj = "CLASS";
-        } else if (reqLower.includes("api") || reqLower.includes("rest") || reqLower.includes("soap")) {
-          decidedObj = "API";
-        }
-        finalDevObject = decidedObj;
-        parsed.developmentObject = decidedObj;
-        console.log(`Auto-determined development object fallback: ${decidedObj}`);
-      }
-    } else {
-      parsed.developmentObject = developmentObject;
-    }
-
-    // If some SVGs are missing or empty, generate fallback default SVG diagrams
-    if (!parsed.visualDiagrams) {
-      parsed.visualDiagrams = {};
-    }
-    if (!parsed.visualDiagrams.flowchartSvg || parsed.visualDiagrams.flowchartSvg.length < 50) {
-      parsed.visualDiagrams.flowchartSvg = createFallbackFlowchart(finalDevObject);
-    }
-    if (!parsed.visualDiagrams.sequenceSvg || parsed.visualDiagrams.sequenceSvg.length < 50) {
-      parsed.visualDiagrams.sequenceSvg = createFallbackSequence();
-    }
-    if (!parsed.visualDiagrams.dataFlowSvg || parsed.visualDiagrams.dataFlowSvg.length < 50) {
-      parsed.visualDiagrams.dataFlowSvg = createFallbackDataFlow(businessArea);
-    }
-
-    res.json(parsed);
-  } catch (error: any) {
-    console.error("Critical analysis handler error:", error);
-    // If even the fallback failed for some reason, return fallback directly
-    try {
-      const parsedFallback = getOfflineFallbackAnalysis(businessArea, developmentObject, manualRequirements);
-      res.json(parsedFallback);
-    } catch (fallbackErr: any) {
-      res.status(500).json({
-        error: "Failed to perform AI analysis. Please check your inputs and try again.",
-        details: error.message
-      });
-    }
-  }
-});
-
-// API: Review & Refine code/documents iteratively using chat
-app.post("/api/chat", async (req, res) => {
-  const { currentAnalysis, chatHistory, userMessage } = req.body;
-
-  try {
-    const prompt = `
-The user is working with an SAP Clean Core Architect analysis report for S/4HANA.
-Below is the current analysis state in JSON:
-${JSON.stringify(currentAnalysis, null, 2)}
-
-Below is the chat history:
-${JSON.stringify(chatHistory, null, 2)}
-
-The user says: "${userMessage}"
-
-Analyze the user's feedback. If they ask to modify or improve anything (e.g. "Optimize SQL", "Follow Clean Core", "Reduce DB Calls", "Convert to CDS", "Convert to RAP", "Add ALV", "Change field", "Add validation"), you MUST modify the corresponding fields in the JSON (e.g., code, specifications, object lists, sandbox tests, SVG flowchart) and return the UPDATED complete JSON object.
-If it is a purely informational or advisory question, still return the entire JSON, but append a new field "chatAssistantReply" containing your helpful, professional SAP Architect advice.
-
-Ensure that the output remains a single, valid JSON object matching the complete analysis schema.
-`;
-
-    console.log(`Sending chat refinement to Gemini...`);
-    let parsed: any;
-    try {
-      const response = await callGeminiWithRetry(() => ai.models.generateContent({
-        model: "gemini-3.5-flash",
-        contents: prompt,
-        config: {
-          systemInstruction: SAP_ARCHITECT_SYSTEM_INSTRUCTION,
-          responseMimeType: "application/json",
-          temperature: 0.3,
-        },
-      }));
-
-      const resultText = response.text || "{}";
-      parsed = JSON.parse(resultText);
-    } catch (apiErr: any) {
-      console.warn("Gemini chat failed or overloaded, executing fallback mechanism...", apiErr);
-      parsed = getOfflineFallbackChat(currentAnalysis, userMessage);
-    }
-    res.json(parsed);
-  } catch (error: any) {
-    console.error("Critical chat handler error:", error);
-    try {
-      const parsedFallback = getOfflineFallbackChat(currentAnalysis, userMessage);
-      res.json(parsedFallback);
-    } catch (fallbackErr: any) {
-      res.status(500).json({
-        error: "Failed to process chat refinement.",
-        details: error.message
-      });
-    }
-  }
-});
-
-// API: Code review engine (Improve, Optimize, Clean Core)
-app.post("/api/improve", async (req, res) => {
-  const { currentCode, currentAnalysis, improvementType } = req.body;
-
-  try {
-    const prompt = `
-You are the SAP Code Reviewer & Clean Core Quality Gatekeeper.
-The user wants to apply the following improvement to their current ABAP Code: "${improvementType}"
-
-Current Code:
-\`\`\`abap
-${currentCode}
-\`\`\`
-
-Current Analysis Meta (Tables: ${JSON.stringify(currentAnalysis?.impactedTables)}, Module: ${currentAnalysis?.module}):
-
-Task:
-1. Re-analyze the code and implement the requested improvements (e.g. convert nested SELECTs into FOR ALL ENTRIES or JOINs, use CDS views, enforce ABAP 7.4+ syntax, add authorization checks, ensure strict Clean Core compliance).
-2. Generate the improved code.
-3. Compare the original and new code, detailing what was optimized.
-4. Prepare an ATC (ABAP Test Cockpit) checklist and rating.
-
-Your response MUST be a valid JSON object matching this schema:
-{
-  "improvedCode": "string (COMPLETE ABAP 7.4+ CODE)",
-  "cleanCoreScore": 98, // integer 0-100
-  "comparison": [
-    {
-      "originalSnippet": "string",
-      "improvedSnippet": "string",
-      "explanation": "string explaining why this is better, e.g. 'Reduced DB calls by joining I_SalesOrder instead of querying VBAK directly'"
-    }
-  ],
-  "atcComplianceChecklist": ["string (list of checks)"],
-  "s4HanaReadinessNotes": "string (readiness check evaluation)",
-  "reviewFeedback": "string (high-level expert summary of changes)"
-}
-`;
-
-    console.log(`Sending code improvement request to Gemini...`);
-    let parsed: any;
-    try {
-      const response = await callGeminiWithRetry(() => ai.models.generateContent({
-        model: "gemini-3.5-flash",
-        contents: prompt,
-        config: {
-          systemInstruction: SAP_ARCHITECT_SYSTEM_INSTRUCTION,
-          responseMimeType: "application/json",
-          temperature: 0.2,
-        },
-      }));
-
-      const resultText = response.text || "{}";
-      parsed = JSON.parse(resultText);
-    } catch (apiErr: any) {
-      console.warn("Gemini code improvement failed or overloaded, executing fallback mechanism...", apiErr);
-      parsed = getOfflineFallbackImprovement(currentCode, improvementType);
-    }
-    res.json(parsed);
-  } catch (error: any) {
-    console.error("Critical code improvement handler error:", error);
-    try {
-      const parsedFallback = getOfflineFallbackImprovement(currentCode, improvementType);
-      res.json(parsedFallback);
-    } catch (fallbackErr: any) {
-      res.status(500).json({
-        error: "Failed to perform code improvement.",
-        details: error.message
-      });
-    }
-  }
-});
-
-// API: Simulate ABAP Unit Execution & Sandbox Execution
-app.post("/api/simulate", (req, res) => {
-  const { abapCode, sandbox } = req.body;
-
-  try {
-    // Generate simulated terminal output logs dynamically based on the code/mock data
-    const logs: string[] = [
-      `[INFO] Booting ABAP 7.4 Embedded Sandbox Instance...`,
-      `[INFO] Initializing Mock Database Containers for: ${sandbox?.testData?.map((t: any) => t.tableName).join(", ") || "SFLIGHT, VBAP, EKKO"}`,
-    ];
-
-    sandbox?.testData?.forEach((table: any) => {
-      logs.push(`[DB] Seeding table ${table.tableName} with ${table.records?.length || 0} active records.`);
-      if (table.records && table.records.length > 0) {
-        logs.push(`[DB] Sample Key Loaded: ${JSON.stringify(table.records[0]).substring(0, 80)}...`);
-      }
-    });
-
-    logs.push(`[COMPILER] Compilation Successful. 0 errors, 0 warnings.`);
-    logs.push(`[EXEC] Executing ABAP Unit Test Class: LTC_UNIT_TESTS...`);
-
-    // Simulate Unit Test Execution
-    const testCasesRun = [
-      { name: "test_success_flow", status: "PASS", duration: "1.2 ms" },
-      { name: "test_empty_parameters", status: "PASS", duration: "0.4 ms" },
-      { name: "test_invalid_inputs_exception", status: "PASS", duration: "0.8 ms" },
-      { name: "test_clean_core_compliance", status: "PASS", duration: "1.5 ms" }
-    ];
-
-    testCasesRun.forEach(tc => {
-      logs.push(`[UNIT-TEST] Method: ${tc.name} -> [${tc.status}] in ${tc.duration}`);
-    });
-
-    logs.push(`[EXEC] Standalone Main execution triggered.`);
-    
-    // Attempt to extract some processing loops from code to make execution logs look amazingly realistic
-    if (abapCode && abapCode.includes("SELECT")) {
-      logs.push(`[SQL] Modern Open SQL parser intercepted query on released views/tables.`);
-      logs.push(`[SQL] Host variables bound successfully. Retrieving active rows.`);
-      logs.push(`[EXEC] Processed ${sandbox?.testData?.[0]?.records?.length || 3} items inside LOOP-ENDLOOP.`);
-    }
-
-    logs.push(`[INFO] Execution completed. System released all database cursors.`);
-
-    // Mock CPU and Memory statistics
-    const stats = {
-      cpuTimeMs: Math.floor(Math.random() * 8) + 4,
-      dbReads: sandbox?.testData?.reduce((acc: number, val: any) => acc + (val.records?.length || 0), 0) || 5,
-      dbWrites: abapCode?.includes("INSERT") || abapCode?.includes("MODIFY") ? 1 : 0,
-      memoryKb: Math.floor(Math.random() * 32) + 96,
-    };
-
-    res.json({
-      success: true,
-      logs,
-      stats,
-      unitTestsReport: {
-        total: testCasesRun.length,
-        passed: testCasesRun.filter(tc => tc.status === "PASS").length,
-        failed: 0,
-        cases: testCasesRun
-      }
-    });
-  } catch (error: any) {
-    res.status(500).json({ error: "Failed to simulate execution.", details: error.message });
-  }
-});
-
-// Helper: Flowchart Fallback Svg Creator
-function createFallbackFlowchart(objectType: string): string {
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450" width="100%" height="100%" style="background-color: #0f172a; border-radius: 8px; font-family: 'JetBrains Mono', monospace;">
-  <rect x="230" y="20" width="140" height="40" rx="20" fill="#0d9488" stroke="#2dd4bf" stroke-width="2"/>
-  <text x="300" y="45" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="bold">START (UI/T-Code)</text>
-  
-  <line x1="300" y1="60" x2="300" y2="100" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
-  
-  <rect x="200" y="100" width="200" height="50" rx="4" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
-  <text x="300" y="125" font-size="12" fill="#e2e8f0" text-anchor="middle">Initialize Host Variables</text>
-  <text x="300" y="140" font-size="10" fill="#38bdf8" text-anchor="middle">Inline Declarations</text>
-  
-  <line x1="300" y1="150" x2="300" y2="190" stroke="#94a3b8" stroke-width="2"/>
-  
-  <polygon points="300,190 380,225 300,260 220,225" fill="#1e293b" stroke="#fbbf24" stroke-width="2"/>
-  <text x="300" y="222" font-size="11" fill="#e2e8f0" text-anchor="middle">Check Auth</text>
-  <text x="300" y="235" font-size="9" fill="#fbbf24" text-anchor="middle">AUTHORITY-CHECK</text>
-  
-  <!-- Yes Path -->
-  <line x1="300" y1="260" x2="300" y2="300" stroke="#94a3b8" stroke-width="2"/>
-  <text x="315" y="280" font-size="11" fill="#34d399">Authorized</text>
-  
-  <rect x="180" y="300" width="240" height="50" rx="4" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
-  <text x="300" y="325" font-size="12" fill="#e2e8f0" text-anchor="middle">Open SQL Query via CDS View</text>
-  <text x="300" y="340" font-size="9" fill="#10b981" text-anchor="middle">sy-subrc = 0 ?</text>
-  
-  <!-- End Path -->
-  <line x1="300" y1="350" x2="300" y2="390" stroke="#94a3b8" stroke-width="2"/>
-  
-  <rect x="230" y="390" width="140" height="40" rx="20" fill="#f43f5e" stroke="#fda4af" stroke-width="2"/>
-  <text x="300" y="415" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="bold">RETURN / END</text>
-  
-  <!-- No Auth Path -->
-  <path d="M 220 225 L 100 225 L 100 325 L 180 325" fill="none" stroke="#f43f5e" stroke-width="2" stroke-dasharray="4"/>
-  <text x="110" y="215" font-size="11" fill="#f43f5e">Denied</text>
-  
-  <defs>
-    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8" />
-    </marker>
-  </defs>
-</svg>`;
-}
-
-// Helper: Sequence Fallback Svg Creator
-function createFallbackSequence(): string {
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450" width="100%" height="100%" style="background-color: #0f172a; border-radius: 8px; font-family: 'Inter', sans-serif;">
-  <!-- Lifelines -->
-  <line x1="100" y1="50" x2="100" y2="400" stroke="#475569" stroke-width="2" stroke-dasharray="4"/>
-  <line x1="260" y1="50" x2="260" y2="400" stroke="#475569" stroke-width="2" stroke-dasharray="4"/>
-  <line x1="420" y1="50" x2="420" y2="400" stroke="#475569" stroke-width="2" stroke-dasharray="4"/>
-  
-  <!-- Actors Labels -->
-  <rect x="50" y="15" width="100" height="35" rx="4" fill="#38bdf8" />
-  <text x="100" y="37" font-size="12" fill="#0f172a" font-weight="bold" text-anchor="middle">SAP Fiori Client</text>
-  
-  <rect x="210" y="15" width="100" height="35" rx="4" fill="#0d9488" />
-  <text x="260" y="37" font-size="12" fill="#ffffff" font-weight="bold" text-anchor="middle">SAP Gateway</text>
-  
-  <rect x="370" y="15" width="100" height="35" rx="4" fill="#4f46e5" />
-  <text x="420" y="37" font-size="12" fill="#ffffff" font-weight="bold" text-anchor="middle">S/4HANA Core</text>
-  
-  <!-- Activations & Messages -->
-  <!-- 1. Request -->
-  <rect x="95" y="80" width="10" height="300" fill="#334155" rx="2"/>
-  <rect x="255" y="100" width="10" height="180" fill="#334155" rx="2"/>
-  <rect x="415" y="130" width="10" height="120" fill="#334155" rx="2"/>
-  
-  <line x1="105" y1="100" x2="255" y2="100" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow-seq)"/>
-  <text x="180" y="93" font-size="11" fill="#38bdf8" text-anchor="middle">GET OData Entity</text>
-  
-  <line x1="265" y1="130" x2="415" y2="130" stroke="#0d9488" stroke-width="2" marker-end="url(#arrow-seq)"/>
-  <text x="340" y="123" font-size="11" fill="#0d9488" text-anchor="middle">Execute RAP BO</text>
-  
-  <!-- 2. Execution -->
-  <path d="M 425 150 C 450 155, 450 175, 425 180" fill="none" stroke="#4f46e5" stroke-width="2" marker-end="url(#arrow-seq)"/>
-  <text x="440" y="170" font-size="10" fill="#818cf8">Validation &amp; Authority</text>
-  
-  <!-- 3. Returns -->
-  <line x1="415" y1="210" x2="265" y2="210" stroke="#94a3b8" stroke-width="2" stroke-dasharray="3" marker-end="url(#arrow-seq)"/>
-  <text x="340" y="203" font-size="10" fill="#94a3b8" text-anchor="middle">Return Entity Data</text>
-  
-  <line x1="255" y1="250" x2="105" y2="250" stroke="#38bdf8" stroke-width="2" stroke-dasharray="3" marker-end="url(#arrow-seq)"/>
-  <text x="180" y="243" font-size="10" fill="#38bdf8" text-anchor="middle">HTTP JSON Response</text>
-  
-  <defs>
-    <marker id="arrow-seq" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#38bdf8" />
-    </marker>
-  </defs>
-</svg>`;
-}
-
-// Helper: Data Flow Fallback Svg Creator
-function createFallbackDataFlow(businessArea: string): string {
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450" width="100%" height="100%" style="background-color: #0f172a; border-radius: 8px; font-family: 'Inter', sans-serif;">
-  <!-- Databases/Tables Layer -->
-  <g transform="translate(50, 40)">
-    <rect x="0" y="0" width="120" height="60" rx="8" fill="#1e293b" stroke="#f43f5e" stroke-width="2"/>
-    <text x="60" y="30" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="bold">S/4HANA Database</text>
-    <text x="60" y="48" font-size="10" fill="#f43f5e" text-anchor="middle">Tables: ACDOCA / VBAK</text>
-  </g>
-  
-  <line x1="110" y1="100" x2="110" y2="160" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow-df)"/>
-  
-  <!-- CDS Views Layer -->
-  <g transform="translate(30, 160)">
-    <rect x="0" y="0" width="160" height="60" rx="4" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
-    <text x="80" y="25" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="bold">Released CDS Views</text>
-    <text x="80" y="45" font-size="10" fill="#10b981" text-anchor="middle">Core Data Services (I_*)</text>
-  </g>
-  
-  <line x1="110" y1="220" x2="110" y2="280" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow-df)"/>
-  <line x1="190" y1="190" x2="280" y2="190" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow-df)"/>
-  
-  <!-- RAP Layer -->
-  <g transform="translate(280, 160)">
-    <rect x="0" y="0" width="160" height="60" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
-    <text x="80" y="25" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="bold">RAP Business Object</text>
-    <text x="80" y="45" font-size="10" fill="#6366f1" text-anchor="middle">Actions / Determinations</text>
-  </g>
-  
-  <line x1="360" y1="220" x2="360" y2="280" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow-df)"/>
-  
-  <!-- Service Binding Layer -->
-  <g transform="translate(280, 280)">
-    <rect x="0" y="0" width="160" height="60" rx="4" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
-    <text x="80" y="25" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="bold">OData Service Binding</text>
-    <text x="80" y="45" font-size="10" fill="#f59e0b" text-anchor="middle">UI Consumption Service</text>
-  </g>
-  
-  <!-- Classic ABAP Report path -->
-  <g transform="translate(30, 280)">
-    <rect x="0" y="0" width="160" height="60" rx="4" fill="#1e293b" stroke="#06b6d4" stroke-width="2"/>
-    <text x="80" y="25" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="bold">Modern ABAP Report</text>
-    <text x="80" y="45" font-size="10" fill="#06b6d4" text-anchor="middle">SALV Simple Grid</text>
-  </g>
-  
-  <line x1="190" y1="310" x2="280" y2="310" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4"/>
-  
-  <defs>
-    <marker id="arrow-df" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8" />
-    </marker>
-  </defs>
-</svg>`;
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// Server startup — Vite dev middleware + Express listen
-// ═══════════════════════════════════════════════════════════════════
+// Serve static assets in production, otherwise mount Vite dev server
 async function startServer() {
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
@@ -3916,13 +2262,13 @@ async function startServer() {
   } else {
     const distPath = path.join(process.cwd(), "dist");
     app.use(express.static(distPath));
-    app.get("*", (_req, res) => {
+    app.get("*", (req, res) => {
       res.sendFile(path.join(distPath, "index.html"));
     });
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`ComX v2 server running on http://localhost:${PORT}`);
+    console.log(`Server running on http://localhost:${PORT}`);
   });
 }
 

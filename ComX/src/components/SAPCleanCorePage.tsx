@@ -73,7 +73,11 @@ interface AnalysisResult {
 
 // ─────────────────────────────────────────────────────────────────────────────
 
-export default function SAPCleanCorePage() {
+interface SAPCleanCorePageProps {
+  onBack?: () => void;
+}
+
+export default function SAPCleanCorePage({ onBack }: SAPCleanCorePageProps = {}) {
   const [loading, setLoading] = useState<boolean>(false);
   const [improving, setImproving] = useState<boolean>(false);
   const [activeAnalysis, setActiveAnalysis] = useState<AnalysisResult | null>(null);
@@ -222,6 +226,23 @@ export default function SAPCleanCorePage() {
   return (
     <div className="min-h-screen bg-[#F4F7F9] text-[#32363A] flex flex-col font-sans">
 
+      {/* ComX Top-Level Page Switcher Nav */}
+      <div className="bg-slate-900 text-white px-6 py-2 flex items-center gap-4 text-xs font-semibold sticky top-0 z-[60]">
+        <span className="text-indigo-400 font-bold tracking-wider mr-2">ComX</span>
+        {onBack && (
+          <button
+            onClick={onBack}
+            className="px-3 py-1 rounded transition-colors text-slate-300 hover:text-white"
+          >
+            📦 Commodity Intelligence
+          </button>
+        )}
+        <button className="px-3 py-1 rounded bg-blue-600 text-white cursor-default">
+          🔷 SAP Clean Core Suite
+        </button>
+        <span className="ml-auto text-slate-500 text-[10px]">v2026.7</span>
+      </div>
+
       {/* SAP Header */}
       <header className="h-12 bg-[#0040B0] text-white flex items-center justify-between px-6 shadow-md shrink-0">
         <div className="flex items-center space-x-4">
@@ -242,15 +263,6 @@ export default function SAPCleanCorePage() {
             <span className="text-[11px]">Connected: BTP-ABAP-ENV</span>
           </div>
           <div className="bg-white/10 px-3 py-1 rounded-md border border-white/20 text-[11px] font-mono">System: P21/100</div>
-          {/* Tech Stack Info Button */}
-          <button
-            onClick={() => setShowTechInfo(true)}
-            className="flex items-center gap-1.5 px-3 py-1 bg-white/15 hover:bg-white/25 border border-white/30 rounded-md text-[11px] font-semibold transition cursor-pointer"
-            title="View Tech Stack"
-          >
-            <Info className="w-3.5 h-3.5" />
-            Tech Stack
-          </button>
         </div>
       </header>
 
@@ -644,13 +656,22 @@ export default function SAPCleanCorePage() {
       <footer className="border-t border-[#D1D9E0] bg-white px-6 py-6 text-center text-xs text-[#6A6D70]">
         <p>© 2026 ComX v2 — SAP Clean Core ABAP Suite. All rights reserved.</p>
         <p className="mt-1">S/4HANA Extensibility Architect · Upgrade-Safe · ATC Compliant</p>
-        <button
-          onClick={() => setShowInstall(true)}
-          className="mt-4 inline-flex items-center gap-2 px-5 py-2 bg-[#0040B0] hover:bg-[#0053CC] text-white text-xs font-bold rounded-lg transition cursor-pointer shadow-sm"
-        >
-          <Package className="w-3.5 h-3.5" />
-          How to Install &amp; Run This App
-        </button>
+        <div className="mt-4 inline-flex items-center gap-3">
+          <button
+            onClick={() => setShowInstall(true)}
+            className="inline-flex items-center gap-2 px-5 py-2 bg-[#0040B0] hover:bg-[#0053CC] text-white text-xs font-bold rounded-lg transition cursor-pointer shadow-sm"
+          >
+            <Package className="w-3.5 h-3.5" />
+            How to Install &amp; Run This App
+          </button>
+          <button
+            onClick={() => setShowTechInfo(true)}
+            className="inline-flex items-center gap-2 px-5 py-2 bg-white hover:bg-blue-50 text-[#0040B0] text-xs font-bold rounded-lg border border-[#D1D9E0] transition cursor-pointer shadow-sm"
+          >
+            <Info className="w-3.5 h-3.5" />
+            Tech Stack
+          </button>
+        </div>
       </footer>
 
       {/* ── Install Guide Modal ───────────────────────────────────── */}

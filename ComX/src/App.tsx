@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import SAPCleanCorePage from "./components/SAPCleanCorePage";
 import { Material, CommodityMarket, GeopoliticalRisk, Industry } from "./types";
 import UploadZone from "./components/UploadZone";
 import SimulationControls from "./components/SimulationControls";
@@ -13,7 +14,6 @@ import PTPInsightsPanel from "./components/PTPInsightsPanel";
 import GlobalClientsPanel from "./components/GlobalClientsPanel";
 import ProcurementScenariosPanel from "./components/ProcurementScenariosPanel";
 import ScenarioRelationshipViewer from "./components/ScenarioRelationshipViewer";
-import SAPCleanCorePage from "./components/SAPCleanCorePage";
 import {
   BarChart3,
   Globe2,
@@ -30,30 +30,13 @@ import {
   ChevronDown,
   Building2,
   Network,
-  LayoutGrid,
-  Cpu,
-  Code2,
-  Info,
-  X,
-  Server,
-  Layout,
-  Zap,
-  Database,
-  GitBranch,
-  Package,
-  Shield
+  LayoutGrid
 } from "lucide-react";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 
 export default function App() {
-  // Top-level page switcher: Page 1 = ComX Commodity Intelligence, Page 2 = SAP Clean Core
-  const [activePage, setActivePage] = useState<"page1" | "page2">("page1");
-
-  // Tech Stack modal
-  const [showTechInfo, setShowTechInfo] = useState<boolean>(false);
-
-  // Install Guide modal
-  const [showInstall, setShowInstall] = useState<boolean>(false);
+  // Top-level page switcher: Page 1 = Commodity Intelligence, Page 2 = SAP Clean Core
+  const [activePage, setActivePage] = useState<"commodity" | "cleancore">("commodity");
 
   // Active states
   const [activeTab, setActiveTab] = useState<"materials" | "excel_db" | "commodities" | "risks" | "strategy" | "backend_sheet" | "bp_eval" | "global_clients" | "proc_scenarios" | "scenario_map">("materials");
@@ -259,54 +242,34 @@ export default function App() {
   // Selected commodity for detailed historical LME line chart
   const activeCommodity = commodities.find(c => c.id === selectedCommodityId) || commodities[0];
 
+  // If Page 2 is active, render SAPCleanCorePage entirely
+  if (activePage === "cleancore") {
+    return <SAPCleanCorePage onBack={() => setActivePage("commodity")} />;
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans selection:bg-indigo-500/10">
 
-      {/* ── ComX Top-Level Page Navigation Bar ── */}
-      <div className="bg-slate-900 text-white px-6 py-0 flex items-center gap-0 border-b border-slate-700 sticky top-0 z-[60]">
-        {/* Brand */}
-        <div className="flex items-center gap-2 pr-6 border-r border-slate-700 mr-4 py-3">
-          <div className="w-7 h-7 rounded-md bg-indigo-600 flex items-center justify-center text-white font-black text-sm">C</div>
-          <span className="font-bold text-sm tracking-tight text-white">ComX <span className="text-indigo-400 font-light text-xs">v2</span></span>
-        </div>
-        {/* Page Tabs */}
+      {/* ComX Top-Level Page Switcher Nav */}
+      <div className="bg-slate-900 text-white px-6 py-2 flex items-center gap-4 text-xs font-semibold sticky top-0 z-[60]">
+        <span className="text-indigo-400 font-bold tracking-wider mr-2">ComX</span>
         <button
-          onClick={() => setActivePage("page1")}
-          className={`flex items-center gap-2 px-5 py-3 text-xs font-semibold border-b-2 transition cursor-pointer ${
-            activePage === "page1"
-              ? "border-indigo-400 text-indigo-300 bg-slate-800/50"
-              : "border-transparent text-slate-400 hover:text-white hover:bg-slate-800/30"
-          }`}
+          onClick={() => setActivePage("commodity")}
+          className={`px-3 py-1 rounded transition-colors ${activePage === "commodity" ? "bg-indigo-600 text-white" : "text-slate-300 hover:text-white"}`}
         >
-          <BarChart3 className="w-4 h-4" />
-          Page 1 — Commodity Intelligence
+          📦 Commodity Intelligence
         </button>
         <button
-          onClick={() => setActivePage("page2")}
-          className={`flex items-center gap-2 px-5 py-3 text-xs font-semibold border-b-2 transition cursor-pointer ${
-            activePage === "page2"
-              ? "border-blue-400 text-blue-300 bg-slate-800/50"
-              : "border-transparent text-slate-400 hover:text-white hover:bg-slate-800/30"
-          }`}
+          onClick={() => setActivePage("cleancore")}
+          className={`px-3 py-1 rounded transition-colors ${activePage === "cleancore" ? "bg-blue-600 text-white" : "text-slate-300 hover:text-white"}`}
         >
-          <Cpu className="w-4 h-4" />
-          Page 2 — SAP Clean Core ABAP Suite
+          🔷 SAP Clean Core Suite
         </button>
-        <div className="ml-auto flex items-center gap-2 py-3">
-          <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-          <span className="text-[10px] text-slate-400">Server: Live</span>
-        </div>
+        <span className="ml-auto text-slate-500 text-[10px]">v2026.7</span>
       </div>
 
-      {/* ── Page 2: SAP Clean Core ABAP Suite ── */}
-      {activePage === "page2" && <SAPCleanCorePage />}
-
-      {/* ── Page 1: ComX Commodity Intelligence (original app) ── */}
-      {activePage === "page1" && (
-      <div>
-
       {/* Upper Navigation & Branding Header */}
-      <header className="border-b border-slate-200 bg-white sticky top-[44px] z-50 px-6 py-4 shadow-sm" id="app-header">
+      <header className="border-b border-slate-200 bg-white sticky top-8 z-50 px-6 py-4 shadow-sm" id="app-header">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-indigo-700 flex items-center justify-center text-white font-bold text-xl shadow-md">
@@ -325,20 +288,11 @@ export default function App() {
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6">
             <div className="flex items-center gap-2 px-3 py-1 bg-green-50 text-green-700 border border-green-200 rounded-full text-xs font-semibold">
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
               Exchange Feeds: Live (LME/NYMEX)
             </div>
-            {/* Tech Stack Button */}
-            <button
-              onClick={() => setShowTechInfo(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-full text-xs font-semibold transition cursor-pointer"
-              title="View Tech Stack"
-            >
-              <Info className="w-3.5 h-3.5" />
-              Tech Stack
-            </button>
             <div className="h-8 w-[1px] bg-slate-200 hidden md:block"></div>
             <div className="flex items-center gap-3 hidden md:flex">
               <div className="text-right">
@@ -350,215 +304,6 @@ export default function App() {
           </div>
         </div>
       </header>
-
-      {/* ── Tech Stack Modal — Page 1 ──────────────────────────────── */}
-      {showTechInfo && (
-        <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowTechInfo(false)}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-
-            {/* Modal Header */}
-            <div className="sticky top-0 bg-indigo-700 px-6 py-4 flex items-center justify-between rounded-t-2xl">
-              <div className="flex items-center gap-3">
-                <Code2 className="w-5 h-5 text-indigo-200" />
-                <div>
-                  <h2 className="text-white font-bold text-base">Tech Stack — Page 1</h2>
-                  <p className="text-indigo-200 text-[11px]">ComX Commodity Intelligence — Full Software Reference</p>
-                </div>
-              </div>
-              <button onClick={() => setShowTechInfo(false)} className="text-white/70 hover:text-white transition cursor-pointer">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="p-6 space-y-6">
-
-              {/* Frontend */}
-              <section>
-                <div className="flex items-center gap-2 mb-3">
-                  <Layout className="w-4 h-4 text-indigo-600" />
-                  <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider">Frontend</h3>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {[
-                    { name: 'React 19',      version: 'v19.0.1',   desc: 'UI component framework — hooks, state, JSX rendering', color: '#0ea5e9', bg: '#e0f2fe' },
-                    { name: 'TypeScript',    version: '~5.8.2',    desc: 'Strongly-typed JS — interfaces, generics, strict mode', color: '#3178C6', bg: '#e8f0fb' },
-                    { name: 'Vite',          version: 'v6.2.3',    desc: 'Dev server & production bundler — HMR, ESM', color: '#646CFF', bg: '#eeeefd' },
-                    { name: 'Tailwind CSS',  version: 'v4.1.14',   desc: 'Utility-first CSS framework — all layout & styling', color: '#06B6D4', bg: '#e0f9fb' },
-                    { name: 'Recharts',      version: 'v3.9.2',    desc: 'Commodity price line charts, forecasts, LME history', color: '#22C55E', bg: '#f0fdf4' },
-                    { name: 'Lucide React',  version: 'v0.546.0',  desc: 'SVG icon library — all icons across the UI', color: '#F97316', bg: '#fff3e8' },
-                    { name: 'Motion',        version: 'v12.23.24', desc: 'Animation library — smooth panel transitions', color: '#EC4899', bg: '#fce8f3' },
-                  ].map(item => (
-                    <div key={item.name} className="flex items-start gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50">
-                      <div className="w-8 h-8 rounded-md flex items-center justify-center text-xs font-black shrink-0" style={{ background: item.bg, color: item.color }}>{item.name[0]}</div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-slate-800">{item.name}</span>
-                          <span className="text-[10px] font-mono text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">{item.version}</span>
-                        </div>
-                        <p className="text-[11px] text-slate-500 mt-0.5">{item.desc}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-
-              <hr className="border-slate-200" />
-
-              {/* Backend */}
-              <section>
-                <div className="flex items-center gap-2 mb-3">
-                  <Server className="w-4 h-4 text-indigo-600" />
-                  <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider">Backend</h3>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {[
-                    { name: 'Node.js',   version: 'v24+',      desc: 'JavaScript runtime — executes server.ts on port 3000', color: '#3C873A', bg: '#f0fdf4' },
-                    { name: 'Express',   version: 'v4.21.2',   desc: 'HTTP server framework — all REST API routing', color: '#333333', bg: '#f5f5f5' },
-                    { name: 'tsx',       version: 'v4.21.0',   desc: 'TypeScript executor — runs server.ts directly without compile step', color: '#3178C6', bg: '#e8f0fb' },
-                    { name: 'ExcelJS',   version: 'v4.4.0',    desc: 'Reads/writes .xlsx industry workbooks — 10 datasets', color: '#1D6F42', bg: '#f0fdf4' },
-                    { name: 'xlsx',      version: 'v0.18.5',   desc: 'Parses uploaded Excel BOM files from UploadZone', color: '#217346', bg: '#f0fdf4' },
-                    { name: 'dotenv',    version: 'v17.2.3',   desc: 'Loads .env.local — GEMINI_API_KEY, APP_URL, WatsonX config', color: '#ECD53F', bg: '#fffde7' },
-                    { name: 'esbuild',   version: 'v0.25.0',   desc: 'Production bundler — server.ts → dist/server.cjs', color: '#FFCF00', bg: '#fffde7' },
-                  ].map(item => (
-                    <div key={item.name} className="flex items-start gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50">
-                      <div className="w-8 h-8 rounded-md flex items-center justify-center text-xs font-black shrink-0" style={{ background: item.bg, color: item.color }}>{item.name[0]}</div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-slate-800">{item.name}</span>
-                          <span className="text-[10px] font-mono text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">{item.version}</span>
-                        </div>
-                        <p className="text-[11px] text-slate-500 mt-0.5">{item.desc}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-
-              <hr className="border-slate-200" />
-
-              {/* AI & APIs */}
-              <section>
-                <div className="flex items-center gap-2 mb-3">
-                  <Zap className="w-4 h-4 text-indigo-600" />
-                  <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider">AI & Live Data APIs</h3>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {[
-                    { name: 'Google Gemini',   version: '3.5-flash',    desc: 'Primary AI — BOM commodity mapping, strategy memos, sourcing advisor', color: '#4285F4', bg: '#e8f0fb' },
-                    { name: 'Gemini Fallback',  version: '2.0-flash',    desc: 'Automatic fallback when primary model is rate-limited', color: '#34A853', bg: '#f0fdf4' },
-                    { name: '@google/genai',    version: 'v2.4.0',       desc: 'Official Google Generative AI Node.js SDK', color: '#EA4335', bg: '#fef2f2' },
-                    { name: 'IBM WatsonX',      version: 'granite-3-8b', desc: 'Tier-1 AI (when configured) — IBM Granite BOM analysis', color: '#1F70C1', bg: '#e8f0fb' },
-                    { name: 'Yahoo Finance',    version: 'v8 API',       desc: 'Live commodity price fetch — HG=F, HR=F, ALI=F, GC=F, etc.', color: '#6001D2', bg: '#f5f3ff' },
-                  ].map(item => (
-                    <div key={item.name} className="flex items-start gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50">
-                      <div className="w-8 h-8 rounded-md flex items-center justify-center text-xs font-black shrink-0" style={{ background: item.bg, color: item.color }}>{item.name[0]}</div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-slate-800">{item.name}</span>
-                          <span className="text-[10px] font-mono text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">{item.version}</span>
-                        </div>
-                        <p className="text-[11px] text-slate-500 mt-0.5">{item.desc}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-
-              <hr className="border-slate-200" />
-
-              {/* SAP Data */}
-              <section>
-                <div className="flex items-center gap-2 mb-3">
-                  <Database className="w-4 h-4 text-indigo-600" />
-                  <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider">SAP Data & Industry Coverage</h3>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {[
-                    { name: 'SAP MARA/MBEW',    version: 'Material Master',  desc: 'Commodity weight mapping — copper, steel, aluminum, nickel per BOM item', color: '#0040B0', bg: '#e8f0fb' },
-                    { name: 'SAP EKKO/EKPO',    version: 'Purchase Orders',  desc: 'PTP insights — purchase order analytics and scheduling agreement data', color: '#0070F2', bg: '#e0f0ff' },
-                    { name: '10 Industries',    version: 'Excel Workbooks',  desc: 'Automobile, Pharma, Retail, Aerospace, Energy, FMCG, Construction, Semiconductor, Food, Telecom', color: '#1D6F42', bg: '#f0fdf4' },
-                    { name: 'LME / NYMEX',      version: 'Live Exchange',    desc: 'London Metal Exchange + NYMEX futures — 4 tickers per industry', color: '#F0AB00', bg: '#fffde7' },
-                    { name: 'Geopolitical Risk', version: '15 countries',    desc: 'Risk scoring 1–5 per vendor country — supply chain exposure analysis', color: '#E8000D', bg: '#fef2f2' },
-                  ].map(item => (
-                    <div key={item.name} className="flex items-start gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50">
-                      <div className="w-8 h-8 rounded-md flex items-center justify-center text-xs font-black shrink-0" style={{ background: item.bg, color: item.color }}>{item.name[0]}</div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-slate-800">{item.name}</span>
-                          <span className="text-[10px] font-mono text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">{item.version}</span>
-                        </div>
-                        <p className="text-[11px] text-slate-500 mt-0.5">{item.desc}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-
-              <hr className="border-slate-200" />
-
-              {/* DevOps */}
-              <section>
-                <div className="flex items-center gap-2 mb-3">
-                  <GitBranch className="w-4 h-4 text-indigo-600" />
-                  <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider">DevOps & Tooling</h3>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {[
-                    { name: 'Git',           version: 'v2+',              desc: 'Version control — commit history, branching strategy', color: '#F05032', bg: '#fef2f2' },
-                    { name: 'GitHub',        version: 'Sabirunnisa10',    desc: 'Remote — github.com/Sabirunnisa10/ComX', color: '#24292F', bg: '#f5f5f5' },
-                    { name: 'npm',           version: 'v11+',             desc: 'Package manager — 264 dependencies installed', color: '#CB3837', bg: '#fef2f2' },
-                    { name: 'start-comx.bat', version: 'Windows Batch',  desc: 'One-click launcher — auto npm install, opens browser on port 3000', color: '#0078D4', bg: '#e0f0ff' },
-                  ].map(item => (
-                    <div key={item.name} className="flex items-start gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50">
-                      <div className="w-8 h-8 rounded-md flex items-center justify-center text-xs font-black shrink-0" style={{ background: item.bg, color: item.color }}>{item.name[0]}</div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-bold text-slate-800">{item.name}</span>
-                          <span className="text-[10px] font-mono text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">{item.version}</span>
-                        </div>
-                        <p className="text-[11px] text-slate-500 mt-0.5">{item.desc}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-
-              <hr className="border-slate-200" />
-
-              {/* Architecture Summary */}
-              <section>
-                <div className="flex items-center gap-2 mb-3">
-                  <Package className="w-4 h-4 text-indigo-600" />
-                  <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider">Architecture Summary</h3>
-                </div>
-                <div className="bg-indigo-700 text-white rounded-xl p-4 space-y-2 text-[11px] font-mono">
-                  <div className="flex justify-between border-b border-white/20 pb-2"><span className="text-indigo-200">App Name</span><span>ComX v2 — Page 1</span></div>
-                  <div className="flex justify-between border-b border-white/20 pb-2"><span className="text-indigo-200">Server</span><span>Express + Vite (SPA middleware mode)</span></div>
-                  <div className="flex justify-between border-b border-white/20 pb-2"><span className="text-indigo-200">Port</span><span>http://localhost:3000</span></div>
-                  <div className="flex justify-between border-b border-white/20 pb-2"><span className="text-indigo-200">Frontend Build</span><span>Vite 6 → React 19 SPA</span></div>
-                  <div className="flex justify-between border-b border-white/20 pb-2"><span className="text-indigo-200">Key API Routes</span><span>/api/materials · /api/commodities · /api/generate-strategy · /api/analyze-boms</span></div>
-                  <div className="flex justify-between border-b border-white/20 pb-2"><span className="text-indigo-200">Live Price Route</span><span>POST /api/industry/:slug/refresh → Yahoo Finance v8</span></div>
-                  <div className="flex justify-between border-b border-white/20 pb-2"><span className="text-indigo-200">AI Pipeline</span><span>Gemini 3.5-flash → 2.0-flash fallback → Offline memo</span></div>
-                  <div className="flex justify-between border-b border-white/20 pb-2"><span className="text-indigo-200">Industries</span><span>10 (automobile, pharma, retail, aerospace, energy, fmcg…)</span></div>
-                  <div className="flex justify-between border-b border-white/20 pb-2"><span className="text-indigo-200">Language</span><span>TypeScript (ESNext, JSX, strict)</span></div>
-                  <div className="flex justify-between"><span className="text-indigo-200">Total Packages</span><span>264 npm packages</span></div>
-                </div>
-              </section>
-
-              {/* Close */}
-              <div className="flex justify-center pt-2">
-                <button
-                  onClick={() => setShowTechInfo(false)}
-                  className="px-8 py-2.5 bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-bold rounded-lg transition cursor-pointer"
-                >
-                  Close
-                </button>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      )}
 
       {isLoading ? (
         /* Full Page Loader */
@@ -1052,170 +797,12 @@ export default function App() {
       )}
 
       {/* Footer credits and information */}
-      <footer className="border-t border-slate-200 bg-white px-6 py-6 text-center text-xs text-slate-500">
-        <p>© 2026 ComX v2 — SAP Supply Chain Commodity Intelligence + Clean Core ABAP Suite. All rights reserved.</p>
+      <footer className="border-t border-slate-200 bg-white px-6 py-8 text-center text-xs text-slate-500">
+        <p>© 2026 SAP Supply Chain Commodity Integration Module. All rights reserved.</p>
         <p className="mt-1">
-          Page 1: Material master analysis & hedge forecasting ({activeIndustryObj?.label ?? activeIndustry}) · Page 2: S/4HANA Clean Core ABAP Architect
+          Designed for principal SAP material master analysis, weight estimations, and hedge forecasting. {activeIndustryObj?.label ?? activeIndustry} industry simulation mode active.
         </p>
-        {/* Install Guide Button */}
-        <button
-          onClick={() => setShowInstall(true)}
-          className="mt-4 inline-flex items-center gap-2 px-5 py-2 bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-bold rounded-lg transition cursor-pointer shadow-sm"
-        >
-          <Package className="w-3.5 h-3.5" />
-          How to Install &amp; Run This App
-        </button>
       </footer>
-
-      {/* ── Install Guide Modal ───────────────────────────────────── */}
-      {showInstall && (
-        <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowInstall(false)}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-
-            {/* Header */}
-            <div className="sticky top-0 bg-indigo-700 px-6 py-4 flex items-center justify-between rounded-t-2xl">
-              <div className="flex items-center gap-3">
-                <Package className="w-5 h-5 text-indigo-200" />
-                <div>
-                  <h2 className="text-white font-bold text-base">Installation Guide — ComX v2</h2>
-                  <p className="text-indigo-200 text-[11px]">Step-by-step setup from scratch to running app</p>
-                </div>
-              </div>
-              <button onClick={() => setShowInstall(false)} className="text-white/70 hover:text-white transition cursor-pointer">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="p-6 space-y-5">
-
-              {/* Prerequisites */}
-              <section>
-                <div className="flex items-center gap-2 mb-3">
-                  <Shield className="w-4 h-4 text-indigo-600" />
-                  <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider">Prerequisites</h3>
-                </div>
-                <div className="space-y-2">
-                  {[
-                    { label: 'Node.js v18+', note: 'Download from nodejs.org — includes npm automatically', url: 'https://nodejs.org' },
-                    { label: 'Git', note: 'Download from git-scm.com for version control', url: 'https://git-scm.com' },
-                    { label: 'Gemini API Key', note: 'Get a free key from aistudio.google.com/app/apikey', url: 'https://aistudio.google.com/app/apikey' },
-                  ].map((item, i) => (
-                    <div key={i} className="flex items-start gap-3 p-3 rounded-lg border border-slate-200 bg-slate-50">
-                      <div className="w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 text-xs font-black flex items-center justify-center shrink-0 mt-0.5">{i + 1}</div>
-                      <div>
-                        <span className="text-xs font-bold text-slate-800">{item.label}</span>
-                        <p className="text-[11px] text-slate-500 mt-0.5">{item.note}</p>
-                        <a href={item.url} target="_blank" rel="noreferrer" className="text-[10px] text-indigo-600 font-mono hover:underline">{item.url}</a>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-
-              <hr className="border-slate-200" />
-
-              {/* Steps */}
-              <section>
-                <div className="flex items-center gap-2 mb-3">
-                  <GitBranch className="w-4 h-4 text-indigo-600" />
-                  <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider">Installation Steps</h3>
-                </div>
-                <ol className="space-y-3">
-                  {[
-                    {
-                      title: 'Clone the repository',
-                      cmd: 'git clone https://github.com/Sabirunnisa10/ComX.git',
-                      note: 'Downloads all source files into a ComX folder'
-                    },
-                    {
-                      title: 'Enter the project directory',
-                      cmd: 'cd ComX',
-                      note: 'All commands below must be run from inside this folder'
-                    },
-                    {
-                      title: 'Install all dependencies',
-                      cmd: 'npm install',
-                      note: 'Installs 264 packages — takes ~30 seconds on first run'
-                    },
-                    {
-                      title: 'Create the environment file',
-                      cmd: 'copy .env.example .env.local',
-                      note: 'Windows: use copy. Mac/Linux: use cp .env.example .env.local'
-                    },
-                    {
-                      title: 'Add your Gemini API key to .env.local',
-                      cmd: 'GEMINI_API_KEY=your_key_here',
-                      note: 'Open .env.local in any text editor and replace the placeholder with your real key'
-                    },
-                    {
-                      title: 'Start the development server',
-                      cmd: 'npm run dev',
-                      note: 'Starts Express + Vite on http://localhost:3000'
-                    },
-                    {
-                      title: 'Open the app in your browser',
-                      cmd: 'http://localhost:3000',
-                      note: 'Page 1 = Commodity Intelligence · Page 2 = SAP Clean Core ABAP Suite'
-                    },
-                  ].map((step, i) => (
-                    <li key={i} className="flex items-start gap-3">
-                      <div className="w-7 h-7 rounded-full bg-indigo-700 text-white text-xs font-black flex items-center justify-center shrink-0 mt-0.5">{i + 1}</div>
-                      <div className="flex-1">
-                        <p className="text-xs font-bold text-slate-800 mb-1">{step.title}</p>
-                        <code className="block bg-slate-900 text-green-400 text-[11px] font-mono px-3 py-2 rounded-lg mb-1 select-all">{step.cmd}</code>
-                        <p className="text-[11px] text-slate-500">{step.note}</p>
-                      </div>
-                    </li>
-                  ))}
-                </ol>
-              </section>
-
-              <hr className="border-slate-200" />
-
-              {/* One-click launcher */}
-              <section>
-                <div className="flex items-center gap-2 mb-3">
-                  <Zap className="w-4 h-4 text-indigo-600" />
-                  <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider">One-Click Launch (Windows)</h3>
-                </div>
-                <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 space-y-2">
-                  <p className="text-xs text-slate-600">After completing setup above, you can use the included batch file to launch the app with a double-click:</p>
-                  <code className="block bg-slate-900 text-green-400 text-[11px] font-mono px-3 py-2 rounded-lg">start-comx.bat</code>
-                  <p className="text-[11px] text-slate-500">Located in the ComX folder root. Automatically checks for node_modules, runs npm install if missing, starts server, and opens browser.</p>
-                </div>
-              </section>
-
-              <hr className="border-slate-200" />
-
-              {/* Stop server */}
-              <section>
-                <div className="flex items-center gap-2 mb-2">
-                  <Server className="w-4 h-4 text-indigo-600" />
-                  <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider">Stopping the Server</h3>
-                </div>
-                <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
-                  <p className="text-[11px] text-slate-600">In the terminal where the server is running, press:</p>
-                  <code className="block bg-slate-900 text-yellow-400 text-[11px] font-mono px-3 py-2 rounded-lg mt-2">Ctrl + C</code>
-                </div>
-              </section>
-
-              {/* Close */}
-              <div className="flex justify-center pt-2">
-                <button
-                  onClick={() => setShowInstall(false)}
-                  className="px-8 py-2.5 bg-indigo-700 hover:bg-indigo-800 text-white text-xs font-bold rounded-lg transition cursor-pointer"
-                >
-                  Close
-                </button>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      )}
-
-      </div>
-      )} {/* end Page 1 */}
 
     </div>
   );
