@@ -30,13 +30,28 @@ import {
   ChevronDown,
   Building2,
   Network,
-  LayoutGrid
+  LayoutGrid,
+  X,
+  Info,
+  Package,
+  Code2,
+  Server,
+  Layers,
+  GitBranch,
+  Zap,
+  Shield,
+  Database,
+  Layout
 } from "lucide-react";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 
 export default function App() {
   // Top-level page switcher: Page 1 = Commodity Intelligence, Page 2 = SAP Clean Core
   const [activePage, setActivePage] = useState<"commodity" | "cleancore">("commodity");
+
+  // Modal visibility states
+  const [showTechInfo, setShowTechInfo] = useState(false);
+  const [showInstall, setShowInstall] = useState(false);
 
   // Active states
   const [activeTab, setActiveTab] = useState<"materials" | "excel_db" | "commodities" | "risks" | "strategy" | "backend_sheet" | "bp_eval" | "global_clients" | "proc_scenarios" | "scenario_map">("materials");
@@ -796,12 +811,213 @@ export default function App() {
         </main>
       )}
 
+      {/* ── Tech Stack Modal ─────────────────────────────────────────────── */}
+      {showTechInfo && (
+        <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowTechInfo(false)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="sticky top-0 bg-indigo-700 px-6 py-4 flex items-center justify-between rounded-t-2xl">
+              <div className="flex items-center gap-3">
+                <Code2 className="w-5 h-5 text-indigo-200" />
+                <div>
+                  <h2 className="text-white font-bold text-base">Tech Stack — Page 1</h2>
+                  <p className="text-indigo-200 text-[11px]">SAP Commodity Procurement Intelligence — Full Software Reference</p>
+                </div>
+              </div>
+              <button onClick={() => setShowTechInfo(false)} className="text-white/70 hover:text-white transition cursor-pointer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6 space-y-6 text-sm">
+
+              {/* Frontend */}
+              <section>
+                <div className="flex items-center gap-2 mb-3">
+                  <Layout className="w-4 h-4 text-indigo-600" />
+                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Frontend</h3>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { name: "React 19", desc: "UI framework with hooks & concurrent mode" },
+                    { name: "TypeScript 5.8", desc: "Full static typing across all components" },
+                    { name: "Vite 6", desc: "Lightning-fast HMR dev server & bundler" },
+                    { name: "Tailwind CSS 4", desc: "Utility-first responsive styling" },
+                    { name: "Recharts 3.9", desc: "LME/NYMEX commodity line charts" },
+                    { name: "Lucide React", desc: "Icon system (546+ SVG icons)" },
+                  ].map(t => (
+                    <div key={t.name} className="bg-indigo-50 rounded-lg p-3 border border-indigo-100">
+                      <p className="font-bold text-indigo-800 text-xs">{t.name}</p>
+                      <p className="text-[11px] text-slate-500 mt-0.5">{t.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              {/* Backend */}
+              <section>
+                <div className="flex items-center gap-2 mb-3">
+                  <Server className="w-4 h-4 text-indigo-600" />
+                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Backend</h3>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { name: "Express 4.21", desc: "Node.js REST API server on port 3000" },
+                    { name: "tsx (TypeScript)", desc: "Zero-config TS execution for server.ts" },
+                    { name: "ExcelJS 4.4", desc: "Reads SAP industry Excel workbooks" },
+                    { name: "xlsx 0.18", desc: "Secondary XLS parsing for material master" },
+                    { name: "dotenv 17", desc: "Secure .env.local config injection" },
+                    { name: "esbuild", desc: "Production CJS bundle builder" },
+                  ].map(t => (
+                    <div key={t.name} className="bg-slate-50 rounded-lg p-3 border border-slate-200">
+                      <p className="font-bold text-slate-800 text-xs">{t.name}</p>
+                      <p className="text-[11px] text-slate-500 mt-0.5">{t.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              {/* AI */}
+              <section>
+                <div className="flex items-center gap-2 mb-3">
+                  <Zap className="w-4 h-4 text-indigo-600" />
+                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">AI / Intelligence</h3>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { name: "Google Gemini 2.0 Flash", desc: "Strategy advisor & BOM commodity mapping" },
+                    { name: "IBM WatsonX (Granite)", desc: "Enterprise fallback AI for procurement" },
+                    { name: "Yahoo Finance API", desc: "Live LME/NYMEX price refresh (no key)" },
+                    { name: "Offline Fallback Mode", desc: "Static data when API quota exceeded" },
+                  ].map(t => (
+                    <div key={t.name} className="bg-yellow-50 rounded-lg p-3 border border-yellow-100">
+                      <p className="font-bold text-yellow-800 text-xs">{t.name}</p>
+                      <p className="text-[11px] text-slate-500 mt-0.5">{t.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              {/* Data */}
+              <section>
+                <div className="flex items-center gap-2 mb-3">
+                  <Database className="w-4 h-4 text-indigo-600" />
+                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Data Layer</h3>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { name: "10 Industry Workbooks", desc: "Excel master_data.xlsx per SAP client" },
+                    { name: "48 Client Profiles", desc: "Enterprise procurement scenario configs" },
+                    { name: "SAP Material Master", desc: "MARA/KONP/MARC table simulation" },
+                    { name: "Geopolitical Risk Catalog", desc: "Country-level risk scoring engine" },
+                  ].map(t => (
+                    <div key={t.name} className="bg-emerald-50 rounded-lg p-3 border border-emerald-100">
+                      <p className="font-bold text-emerald-800 text-xs">{t.name}</p>
+                      <p className="text-[11px] text-slate-500 mt-0.5">{t.desc}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              <div className="flex justify-center pt-2">
+                <button onClick={() => setShowTechInfo(false)} className="px-8 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg transition cursor-pointer">
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── How to Install Modal ──────────────────────────────────────────── */}
+      {showInstall && (
+        <div className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setShowInstall(false)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <div className="sticky top-0 bg-indigo-700 px-6 py-4 flex items-center justify-between rounded-t-2xl">
+              <div className="flex items-center gap-3">
+                <Package className="w-5 h-5 text-indigo-200" />
+                <div>
+                  <h2 className="text-white font-bold text-base">How to Install &amp; Run</h2>
+                  <p className="text-indigo-200 text-[11px]">ComX v2 — SAP Commodity Intelligence · Page 1</p>
+                </div>
+              </div>
+              <button onClick={() => setShowInstall(false)} className="text-white/70 hover:text-white transition cursor-pointer">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-6 space-y-5 text-sm">
+
+              <section>
+                <div className="flex items-center gap-2 mb-2">
+                  <Shield className="w-4 h-4 text-indigo-600" />
+                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Prerequisites</h3>
+                </div>
+                <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 space-y-1 text-[12px] text-slate-600">
+                  <p>• <strong>Node.js</strong> v18 or higher</p>
+                  <p>• <strong>npm</strong> v9 or higher</p>
+                  <p>• A <strong>Google Gemini API key</strong> (free tier available at ai.google.dev)</p>
+                </div>
+              </section>
+
+              {[
+                { n: "1", title: "Clone or unzip the project", cmd: "cd C:\\Users\\Sabirunnisa\\NEWAPP\\gold-market-intelligence\\ComX" },
+                { n: "2", title: "Install dependencies", cmd: "npm install" },
+                { n: "3", title: "Create environment file", cmd: "copy .env.example .env.local\n# Then edit .env.local and set your GEMINI_API_KEY" },
+                { n: "4", title: "Start the development server", cmd: "npm run dev" },
+                { n: "5", title: "Open in browser", cmd: "http://localhost:3000" },
+                { n: "6", title: "(Optional) Seed industry data", cmd: "npx tsx scripts/seedIndustryData.ts" },
+              ].map(step => (
+                <section key={step.n}>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="w-5 h-5 rounded-full bg-indigo-600 text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0">{step.n}</span>
+                    <h3 className="text-xs font-bold text-slate-700">{step.title}</h3>
+                  </div>
+                  <pre className="bg-slate-900 text-green-400 text-[11px] font-mono px-4 py-3 rounded-lg overflow-x-auto whitespace-pre-wrap">{step.cmd}</pre>
+                </section>
+              ))}
+
+              <section>
+                <div className="flex items-center gap-2 mb-2">
+                  <Server className="w-4 h-4 text-indigo-600" />
+                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Stopping the Server</h3>
+                </div>
+                <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
+                  <p className="text-[11px] text-slate-500">In the terminal where the server is running, press:</p>
+                  <code className="block bg-slate-900 text-yellow-400 text-[11px] font-mono px-3 py-2 rounded-lg mt-2">Ctrl + C</code>
+                </div>
+              </section>
+
+              <div className="flex justify-center pt-2">
+                <button onClick={() => setShowInstall(false)} className="px-8 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg transition cursor-pointer">
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Footer credits and information */}
       <footer className="border-t border-slate-200 bg-white px-6 py-8 text-center text-xs text-slate-500">
         <p>© 2026 SAP Supply Chain Commodity Integration Module. All rights reserved.</p>
         <p className="mt-1">
           Designed for principal SAP material master analysis, weight estimations, and hedge forecasting. {activeIndustryObj?.label ?? activeIndustry} industry simulation mode active.
         </p>
+        {/* Footer action buttons */}
+        <div className="flex items-center justify-center gap-3 mt-5">
+          <button
+            onClick={() => setShowInstall(true)}
+            className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow transition cursor-pointer"
+          >
+            <Package className="w-4 h-4" />
+            How to Install &amp; Run This App
+          </button>
+          <button
+            onClick={() => setShowTechInfo(true)}
+            className="flex items-center gap-2 px-5 py-2.5 bg-white hover:bg-indigo-50 text-indigo-700 text-xs font-semibold border border-indigo-200 rounded-xl shadow-sm transition cursor-pointer"
+          >
+            <Info className="w-4 h-4" />
+            Tech Stack
+          </button>
+        </div>
       </footer>
 
     </div>
