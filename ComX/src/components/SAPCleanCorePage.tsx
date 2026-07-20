@@ -27,9 +27,11 @@ import {
   Database,
   Shield,
   GitBranch,
-  Package
+  Package,
+  Search
 } from 'lucide-react';
 // Note: Shield, GitBranch, Package, Zap, Server, X used in Install modal
+import AbapReviewPanel from './AbapReviewPanel';
 import { SpecificationInput } from './cleancore/SpecificationInput';
 import { StandardDiscovery } from './cleancore/StandardDiscovery';
 import { TechnicalSpecViewer } from './cleancore/TechnicalSpecViewer';
@@ -81,6 +83,9 @@ export default function SAPCleanCorePage({ onBack }: SAPCleanCorePageProps = {})
   const [loading, setLoading] = useState<boolean>(false);
   const [improving, setImproving] = useState<boolean>(false);
   const [activeAnalysis, setActiveAnalysis] = useState<AnalysisResult | null>(null);
+  // Top-level Page 2 mode: architect (generate from spec) | review (review existing code)
+  const [pageMode, setPageMode] = useState<'architect' | 'review'>('architect');
+
   const [activeTab, setActiveTab] = useState<'architecture' | 'tsd' | 'abap' | 'extensibility'>('architecture');
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState<string>('');
@@ -265,6 +270,32 @@ export default function SAPCleanCorePage({ onBack }: SAPCleanCorePageProps = {})
           <div className="bg-white/10 px-3 py-1 rounded-md border border-white/20 text-[11px] font-mono">System: P21/100</div>
         </div>
       </header>
+
+      {/* ── Page 2 mode switcher bar (below SAP header) ──────────────── */}
+      <div className="bg-[#F4F7F9] border-b border-[#D1D9E0] px-6 flex items-center gap-1 shrink-0">
+        <button
+          onClick={() => setPageMode('architect')}
+          className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold border-b-2 transition cursor-pointer ${
+            pageMode === 'architect'
+              ? 'border-[#0040B0] text-[#0040B0] bg-white'
+              : 'border-transparent text-[#6A6D70] hover:text-[#32363A] hover:bg-white/60'
+          }`}
+        >
+          <Compass className="w-3.5 h-3.5" />
+          Architect — Generate from Spec
+        </button>
+        <button
+          onClick={() => setPageMode('review')}
+          className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold border-b-2 transition cursor-pointer ${
+            pageMode === 'review'
+              ? 'border-[#0040B0] text-[#0040B0] bg-white'
+              : 'border-transparent text-[#6A6D70] hover:text-[#32363A] hover:bg-white/60'
+          }`}
+        >
+          <Search className="w-3.5 h-3.5" />
+          Review &amp; Optimize Existing Code
+        </button>
+      </div>
 
       {/* ── Tech Stack Modal ─────────────────────────────────────────── */}
       {showTechInfo && (
@@ -475,7 +506,12 @@ export default function SAPCleanCorePage({ onBack }: SAPCleanCorePageProps = {})
       {/* Main Layout */}
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
         <main className="flex-1 overflow-y-auto p-6 space-y-6">
-          {!activeAnalysis ? (
+
+          {/* ── Review mode ─────────────────────────────────────────── */}
+          {pageMode === 'review' && <AbapReviewPanel />}
+
+          {/* ── Architect mode ──────────────────────────────────────── */}
+          {pageMode === 'architect' && !activeAnalysis ? (
             <div className="max-w-4xl mx-auto space-y-6">
               {/* Intro card */}
               <div className="bg-white border border-[#D1D9E0] rounded-xl p-6 flex flex-col md:flex-row gap-6 items-center shadow-sm">
@@ -511,7 +547,7 @@ export default function SAPCleanCorePage({ onBack }: SAPCleanCorePageProps = {})
               </div>
               <SpecificationInput onAnalyze={handleAnalyze} loading={loading} />
             </div>
-          ) : (
+          ) : pageMode === 'architect' ? (
             <div className="space-y-6">
               {/* Active project bar */}
               <div className="bg-white border border-[#D1D9E0] rounded-xl p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-sm">
@@ -648,7 +684,7 @@ export default function SAPCleanCorePage({ onBack }: SAPCleanCorePageProps = {})
                 </div>
               )}
             </div>
-          )}
+          ) : null}
         </main>
       </div>
 
